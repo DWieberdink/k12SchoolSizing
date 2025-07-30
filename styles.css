@@ -1,0 +1,1596 @@
+/* Modern K-12 Space Utilization Interface Styles */
+
+/* CSS Variables for consistent theming */
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --accent-color: #e74c3c;
+  --success-color: #27ae60;
+  --warning-color: #f39c12;
+  --info-color: #17a2b8;
+  --light-bg: #f8f9fa;
+  --dark-bg: #343a40;
+  --border-color: #dee2e6;
+  --text-primary: #2c3e50;
+  --text-secondary: #6c757d;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.15);
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --transition: all 0.3s ease;
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* Header Styles */
+.app-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.5rem 0;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.app-title {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0.5rem 0 0 0;
+  font-weight: 400;
+}
+
+/* Header Metrics */
+.header-metrics {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.metric-box {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  text-align: center;
+  min-width: 140px;
+  width: 140px;
+  transition: var(--transition);
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.metric-box:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.metric-label {
+  color: #34495e;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+  display: block;
+  visibility: visible;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.metric-value {
+  color: #2c3e50 !important;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  min-height: 1.5rem;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  text-shadow: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.nsf-box {
+  border-left: 4px solid #27ae60;
+}
+
+.gsf-box {
+  border-left: 4px solid #f39c12;
+}
+
+/* GSF Multiplier Control */
+.gsf-multiplier-control {
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.gsf-multiplier-control .form-label {
+  color: #34495e;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.15rem;
+}
+
+.gsf-multiplier-control .form-range {
+  width: 60px;
+  height: 3px;
+  background: rgba(243, 156, 18, 0.3);
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.gsf-multiplier-control .form-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  background: #f39c12;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.gsf-multiplier-control .form-range::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: #f39c12;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.multiplier-value {
+  color: #f39c12;
+  font-size: 0.7rem;
+  font-weight: 600;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+/* Admin Section Styles */
+.admin-section {
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+}
+
+.admin-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--secondary-color);
+}
+
+.admin-card h5 {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--light-bg);
+  padding-bottom: 0.5rem;
+}
+
+.admin-card h6 {
+  color: var(--secondary-color);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.input-summary {
+  background: var(--light-bg);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+}
+
+.input-summary .form-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value-display {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  background: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.calculation-group {
+  background: var(--light-bg);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  border-left: 3px solid var(--success-color);
+}
+
+.formula-display {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  font-family: 'Courier New', monospace;
+}
+
+.formula-display code {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.calculation-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.breakdown-item .label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.breakdown-item .value {
+  font-weight: 600;
+  color: var(--primary-color);
+  background: var(--light-bg);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.admin-table {
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.admin-table th {
+  background: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 0.75rem;
+}
+
+.admin-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:hover {
+  background: var(--light-bg);
+}
+
+.data-source {
+  background: var(--light-bg);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  border-left: 3px solid var(--info-color);
+}
+
+.data-source h6 {
+  color: var(--info-color);
+  margin-bottom: 0.75rem;
+}
+
+.source-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.source-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.source-value {
+  font-weight: 600;
+  color: var(--primary-color);
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.85rem;
+}
+
+/* Formula Breakdown Styles */
+.formula-group {
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  border-left: 4px solid var(--info-color);
+}
+
+.formula-group-title {
+  color: var(--info-color);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.formula-category {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.formula-category h6 {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  border-bottom: 2px solid var(--light-bg);
+  padding-bottom: 0.5rem;
+}
+
+.formula-explanation {
+  margin-bottom: 1rem;
+}
+
+.formula-explanation p {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.formula-explanation code {
+  background: var(--light-bg);
+  color: var(--primary-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.formula-examples {
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+}
+
+.example-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.example-item:last-child {
+  margin-bottom: 0;
+}
+
+.example-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  min-width: 200px;
+}
+
+.example-formula {
+  font-family: 'Courier New', monospace;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  background: var(--light-bg);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  flex: 1;
+  margin-left: 1rem;
+}
+
+/* Main Content */
+.main-content {
+  padding: 2rem 0;
+  min-height: calc(100vh - 120px);
+}
+
+.main-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: none;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-bottom: none;
+  padding: 0;
+}
+
+.card-header-tabs {
+  border-bottom: none;
+  margin: 0;
+}
+
+.card-header-tabs .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 0;
+  padding: 1.25rem 2rem;
+  font-weight: 500;
+  transition: var(--transition);
+  position: relative;
+}
+
+.card-header-tabs .nav-link:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.card-header-tabs .nav-link.active {
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  border-bottom: 3px solid white;
+}
+
+/* Push Admin tab to the far right */
+.card-header-tabs {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-header-tabs .nav-item:last-child {
+  margin-left: auto;
+}
+
+.card-header-tabs .nav-item:last-child .nav-link {
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  margin-left: 1rem;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+/* Standards Section */
+.standards-section {
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.standards-nav {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 0.5rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+
+.standards-nav .nav-link {
+  color: var(--text-secondary);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.standards-nav .nav-link:hover {
+  color: var(--primary-color);
+  background: var(--light-bg);
+}
+
+.standards-nav .nav-link.active {
+  color: white;
+  background: var(--secondary-color);
+  box-shadow: var(--shadow);
+}
+
+.standards-content {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+/* School Details Section */
+.school-details-section {
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+}
+
+.input-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  border: 1px solid var(--border-color);
+}
+
+.input-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.input-card .form-label {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.input-card .form-control {
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  font-size: 1.1rem;
+  transition: var(--transition);
+}
+
+.input-card .form-control:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.input-card .form-control[readonly] {
+  background: var(--light-bg);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Controls Section */
+.controls-section {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-controls .form-label {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Table Styles */
+.table-container {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  margin-top: 1.5rem;
+  overflow: auto;
+  max-height: 70vh;
+  position: relative;
+}
+
+/* Table container with proper scrolling setup */
+.table-container {
+  position: relative;
+  overflow: auto; /* Allow scrolling */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white;
+  border: 1px solid #e0e0e0;
+}
+
+/* Specific styling for School Details table container */
+#schoolDetailsTableContainer {
+  height: 500px; /* Fixed height to force scrolling */
+  overflow: auto; /* Enable scrolling */
+  position: relative;
+}
+
+/* Table wrapper to contain the sticky headers */
+.table-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  /* Ensure proper scrolling context */
+  transform: translateZ(0);
+  /* Add some padding to prevent content from touching edges */
+  padding: 1px;
+  /* Force horizontal scrollbar to appear */
+  min-width: 0;
+}
+
+/* Sticky header implementation */
+.data-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 1400px; /* Adjusted for new column widths */
+  position: relative;
+  /* Use auto layout to allow natural column sizing */
+  table-layout: auto;
+}
+
+.data-table thead {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  /* Remove white background to allow original colors */
+  /* Ensure proper stacking */
+  isolation: isolate;
+}
+
+.data-table thead tr:first-child {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 11;
+  /* Remove background override to keep original colors */
+}
+
+.data-table thead tr:nth-child(2) {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 60px; /* Height of first header row */
+  z-index: 10;
+  background: white;
+}
+
+/* Ensure headers have proper styling */
+.data-table thead th {
+  border-bottom: 2px solid #dee2e6;
+  /* Don't override background colors */
+  padding: 8px 12px;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.2;
+}
+
+/* Give more width to the first two columns */
+.data-table th:nth-child(1),
+.data-table td:nth-child(1) {
+  width: 250px;
+  min-width: 250px;
+}
+
+.data-table th:nth-child(2),
+.data-table td:nth-child(2) {
+  width: 300px;
+  min-width: 300px;
+}
+
+/* Make data columns consistent width */
+.data-table th:nth-child(3),
+.data-table td:nth-child(3),
+.data-table th:nth-child(4),
+.data-table td:nth-child(4),
+.data-table th:nth-child(5),
+.data-table td:nth-child(5),
+.data-table th:nth-child(6),
+.data-table td:nth-child(6),
+.data-table th:nth-child(7),
+.data-table td:nth-child(7),
+.data-table th:nth-child(8),
+.data-table td:nth-child(8) {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+}
+
+/* Make difference columns narrower */
+.data-table th:nth-child(9),
+.data-table td:nth-child(9),
+.data-table th:nth-child(10),
+.data-table td:nth-child(10) {
+  width: 90px;
+  min-width: 90px;
+  max-width: 90px;
+}
+
+
+
+/* Preserve column group colors when sticky */
+.data-table thead tr:first-child .column-group {
+  background: inherit !important;
+  color: white !important;
+}
+
+/* Ensure subheader text is visible */
+.data-table thead tr:nth-child(2) th {
+  color: #333 !important;
+  background: white !important;
+}
+
+/* Add shadow to sticky headers */
+.data-table thead::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+  pointer-events: none;
+}
+
+/* Ensure data rows don't appear above headers */
+.data-table tbody {
+  position: relative;
+  z-index: 1;
+  /* Ensure tbody doesn't interfere with sticky headers */
+  background: white;
+}
+
+/* Add shadow to sticky headers for better visual separation */
+.data-table thead tr:first-child::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+}
+
+.data-table thead tr:nth-child(2)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0,0,0,0.1);
+}
+
+
+
+/* Column Group Headers */
+.column-group-header {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+}
+
+.column-group-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.column-group {
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  border: none;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.column-group:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* School Details Group */
+.school-details-group {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border-right: 4px solid #1f618d;
+}
+
+.school-details-group::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: #1f618d;
+  border-radius: 2px;
+}
+
+/* Guidelines Group */
+.guidelines-group {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  border-right: 4px solid #1e8449;
+}
+
+.guidelines-group::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: #1e8449;
+  border-radius: 2px;
+}
+
+/* Existing Group */
+.existing-group {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  border-right: 4px solid #d68910;
+}
+
+.existing-group::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: #d68910;
+  border-radius: 2px;
+}
+
+/* Proposed Group */
+.proposed-group {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border-right: 4px solid #a93226;
+}
+
+.proposed-group::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: #a93226;
+  border-radius: 2px;
+}
+
+/* Difference Group */
+.difference-group {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  border-right: none;
+}
+
+/* Column Sub-headers */
+.column-subheader {
+  background: white;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.column-subheader-cell {
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 0.5rem 0.5rem;
+  border: none;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Sub-header group styling */
+.school-details-subheader {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border-right: 2px solid rgba(52, 152, 219, 0.3);
+}
+
+.guidelines-subheader {
+  background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+  border-right: 2px solid rgba(39, 174, 96, 0.3);
+}
+
+.existing-subheader {
+  background: linear-gradient(135deg, #fff3e0, #ffcc80);
+  border-right: 2px solid rgba(243, 156, 18, 0.3);
+}
+
+.proposed-subheader {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  border-right: 2px solid rgba(231, 76, 60, 0.3);
+}
+
+.difference-subheader {
+  background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+  border-right: none;
+}
+
+/* Table body cells with group-specific borders */
+.data-table tbody tr td:nth-child(1),
+.data-table tbody tr td:nth-child(2) {
+  border-right: 2px solid rgba(52, 152, 219, 0.3);
+}
+
+.data-table tbody tr td:nth-child(3),
+.data-table tbody tr td:nth-child(4),
+.data-table tbody tr td:nth-child(5) {
+  border-right: 2px solid rgba(39, 174, 96, 0.3);
+}
+
+.data-table tbody tr td:nth-child(6),
+.data-table tbody tr td:nth-child(7) {
+  border-right: 2px solid rgba(243, 156, 18, 0.3);
+}
+
+.data-table tbody tr td:nth-child(8),
+.data-table tbody tr td:nth-child(9) {
+  border-right: 2px solid rgba(231, 76, 60, 0.3);
+}
+
+/* Legacy table header for other tables */
+.table-header {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  font-weight: 600;
+  padding: 1rem 0.75rem;
+  border: none;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.data-table tbody tr {
+  transition: var(--transition);
+}
+
+.data-table tbody tr:hover {
+  background: rgba(52, 152, 219, 0.05);
+  transform: scale(1.01);
+  box-shadow: var(--shadow);
+}
+
+/* Group-specific row hover effects */
+.data-table tbody tr:hover td:nth-child(1),
+.data-table tbody tr:hover td:nth-child(2) {
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.data-table tbody tr:hover td:nth-child(3),
+.data-table tbody tr:hover td:nth-child(4),
+.data-table tbody tr:hover td:nth-child(5) {
+  background: rgba(39, 174, 96, 0.1);
+}
+
+.data-table tbody tr:hover td:nth-child(6),
+.data-table tbody tr:hover td:nth-child(7) {
+  background: rgba(243, 156, 18, 0.1);
+}
+
+.data-table tbody tr:hover td:nth-child(8),
+.data-table tbody tr:hover td:nth-child(9) {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.data-table tbody tr:hover td:nth-child(10),
+.data-table tbody tr:hover td:nth-child(11) {
+  background: rgba(155, 89, 182, 0.1);
+}
+
+/* Total Row Styling */
+.total-row {
+  background: var(--light-bg) !important;
+  font-weight: 700 !important;
+  border-top: 3px solid var(--primary-color) !important;
+}
+
+.total-row td {
+  background: var(--light-bg) !important;
+  font-weight: 700 !important;
+  color: var(--primary-color) !important;
+  border-top: 3px solid var(--primary-color) !important;
+  padding: 0.75rem 0.5rem !important;
+}
+
+.total-row td:first-child {
+  color: var(--primary-color) !important;
+  font-weight: 800 !important;
+  font-size: 1.1rem !important;
+}
+
+.total-row td:nth-child(2) {
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+}
+
+.data-table td {
+  border-color: var(--border-color);
+  vertical-align: middle;
+}
+
+.editable-input {
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.5rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  transition: var(--transition);
+}
+
+.editable-input:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* Button Styles */
+.btn {
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  transition: var(--transition);
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+  box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #2980b9, var(--secondary-color));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-outline-primary {
+  border: 2px solid var(--secondary-color);
+  color: var(--secondary-color);
+}
+
+.btn-outline-primary:hover {
+  background: var(--secondary-color);
+  border-color: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+.btn-outline-secondary {
+  border: 2px solid var(--text-secondary);
+  color: var(--text-secondary);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--text-secondary);
+  border-color: var(--text-secondary);
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--accent-color), #c0392b);
+  box-shadow: var(--shadow);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #c0392b, var(--accent-color));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+/* Summary Section */
+.summary-section {
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Statistics Cards */
+.stats-cards {
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.enrollment-card .stat-icon {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.special-ed-card .stat-icon {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.nsf-card .stat-icon {
+  background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.gsf-card .stat-icon {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.stat-content h4 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stat-content p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Chart Cards */
+.charts-section {
+  margin-bottom: 2rem;
+}
+
+.chart-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+  height: 400px;
+  overflow: hidden;
+}
+
+.chart-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.chart-card h5 {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--light-bg);
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.chart-card canvas {
+  max-width: 100%;
+  height: 300px !important;
+  max-height: 300px !important;
+}
+
+/* Summary Table */
+.summary-table {
+  font-size: 0.9rem;
+}
+
+.summary-table th {
+  background: var(--light-bg);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.8rem;
+}
+
+.summary-table td {
+  vertical-align: middle;
+}
+
+.summary-table .positive {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.summary-table .negative {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+/* Legacy charts container for backward compatibility */
+.charts-container {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  margin-top: 1.5rem;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Formula Editor */
+.formula-editor-section {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.formula-editor {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: #f8f9fa;
+}
+
+/* Alert Styles */
+.alert {
+  border-radius: var(--border-radius);
+  border: none;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, var(--info-color), #138496);
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-title {
+    font-size: 2rem;
+  }
+  
+  .app-subtitle {
+    font-size: 1rem;
+  }
+  
+  .card-header-tabs .nav-link {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .input-card {
+    padding: 1rem;
+  }
+  
+  .filter-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .app-header {
+    padding: 1rem 0;
+  }
+  
+  .main-content {
+    padding: 1rem 0;
+  }
+  
+  .standards-nav {
+    flex-direction: column;
+  }
+  
+  .standards-nav .nav-link {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--border-color);
+  border-top: 2px solid var(--secondary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Column Group Legend */
+.column-group-legend {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.legend-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid white;
+  box-shadow: var(--shadow);
+}
+
+.school-details-color {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.guidelines-color {
+  background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.existing-color {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.proposed-color {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.difference-color {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.legend-text {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* File Upload Sections */
+.file-upload-section {
+  margin-top: 2rem;
+}
+
+.upload-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+
+.upload-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.upload-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.upload-header h5 {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin: 0;
+}
+
+.upload-description {
+  margin-bottom: 1.5rem;
+}
+
+.upload-description p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.upload-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.upload-controls .form-control {
+  border: 2px dashed var(--border-color);
+  background: var(--light-bg);
+  transition: var(--transition);
+}
+
+.upload-controls .form-control:hover {
+  border-color: var(--secondary-color);
+  background: white;
+}
+
+.upload-controls .form-control:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.upload-controls .d-flex {
+  gap: 0.5rem;
+}
+
+.upload-controls .btn-outline-success {
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.upload-controls .btn-outline-success:hover {
+  background: var(--success-color);
+  border-color: var(--success-color);
+  transform: translateY(-2px);
+}
+
+.upload-controls .btn-outline-secondary {
+  border-color: var(--text-secondary);
+  color: var(--text-secondary);
+}
+
+.upload-controls .btn-outline-secondary:hover {
+  background: var(--text-secondary);
+  border-color: var(--text-secondary);
+  transform: translateY(-2px);
+}
+
+/* Print Styles */
+@media print {
+  .app-header,
+  .btn,
+  .controls-section,
+  .column-group-legend {
+    display: none !important;
+  }
+  
+  .main-card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  
+  .data-table {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
+  

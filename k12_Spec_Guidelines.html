@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>K-12 Space Utilization</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Password Protection Overlay -->
+  <div id="passwordOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; max-width: 400px; width: 90%;">
+      <h2 style="color: #333; margin-bottom: 20px;">
+        <i class="fas fa-lock me-2"></i>K12 School Sizing Tool
+      </h2>
+      <p style="color: #666; margin-bottom: 25px;">Please enter the password to access the application</p>
+      <div style="margin-bottom: 20px;">
+        <input type="password" id="passwordInput" placeholder="Enter password" 
+               style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; outline: none;"
+               onkeypress="if(event.key === 'Enter') checkPassword()">
+      </div>
+      <button onclick="checkPassword()" 
+              style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: transform 0.2s;"
+              onmouseover="this.style.transform='scale(1.05)'" 
+              onmouseout="this.style.transform='scale(1)'">
+        <i class="fas fa-sign-in-alt me-2"></i>Access Application
+      </button>
+      <div id="passwordError" style="color: #e74c3c; margin-top: 15px; font-weight: bold; display: none;">
+        <i class="fas fa-exclamation-triangle me-2"></i>Incorrect password. Please try again.
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Content (initially hidden) -->
+  <div id="mainContent" style="display: none;">
+    <!-- Header -->
+    <header class="app-header">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col">
+          <h1 class="app-title">
+            <i class="fas fa-school me-3"></i>
+            K-12 Space Utilization Calculator
+          </h1>
+          <p class="app-subtitle">Comprehensive space planning and analysis tool</p>
+        </div>
+        <div class="col-auto">
+          <div class="header-metrics d-flex align-items-center gap-3">
+            <div class="metric-box nsf-box">
+              <div class="metric-label">Total NSF</div>
+              <div class="metric-value" id="headerTotalNSF">0</div>
+            </div>
+            <div class="metric-box gsf-box">
+              <div class="metric-label">Total GSF</div>
+              <div class="metric-value" id="headerTotalGSF">0</div>
+              <div class="gsf-multiplier-control">
+                <label for="gsfMultiplier" class="form-label small mb-1">GSF Multiplier</label>
+                <div class="d-flex align-items-center gap-2">
+                  <input type="range" id="gsfMultiplier" class="form-range" min="1.4" max="1.6" step="0.1" value="1.5" 
+                         oninput="updateGSFMultiplier(this.value)">
+                  <span class="multiplier-value" id="gsfMultiplierValue">1.5</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-lg" onclick="console.log('Button clicked'); console.log('testFunction available:', typeof window.testFunction); if(typeof window.testFunction === 'function') { window.testFunction(); } if(typeof window.recalculateAll === 'function') { window.recalculateAll(this); } else { console.error('recalculateAll function not found - trying again in 100ms'); setTimeout(() => { if(typeof window.recalculateAll === 'function') { window.recalculateAll(this); } else { console.error('recalculateAll function still not found after delay'); } }, 100); }">
+              <i class="fas fa-calculator me-2"></i>
+              Recalculate All
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container-fluid">
+      <!-- Main Tabs -->
+      <div class="card main-card">
+        <div class="card-header">
+          <ul class="nav nav-tabs card-header-tabs" id="spaceTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="standards-tab" data-bs-toggle="tab" data-bs-target="#standards" type="button" role="tab">
+                <i class="fas fa-ruler-combined me-2"></i>
+                Space Standards
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">
+                <i class="fas fa-building me-2"></i>
+                School Details
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab">
+                <i class="fas fa-chart-bar me-2"></i>
+                Space Summary
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button" role="tab">
+                <i class="fas fa-cogs me-2"></i>
+                Admin
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card-body">
+          <div class="tab-content">
+            <!-- Space Standards with Sub-tabs -->
+            <div class="tab-pane fade show active" id="standards" role="tabpanel">
+              <div class="standards-section">
+                <ul class="nav nav-pills standards-nav" id="spaceSubTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="section-size-tab" data-bs-toggle="pill" data-bs-target="#section-size" type="button" role="tab">
+                      <i class="fas fa-users me-2"></i>
+                      Academic Section Size
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="instruction-cycles-tab" data-bs-toggle="pill" data-bs-target="#instruction-cycles" type="button" role="tab">
+                      <i class="fas fa-clock me-2"></i>
+                      Instruction Cycles
+                    </button>
+                  </li>
+                   <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="standard-input-tab" data-bs-toggle="pill" data-bs-target="#standard-input" type="button" role="tab">
+                      <i class="fas fa-edit me-2"></i>
+                      Space Standard Input
+                    </button>
+                  </li>
+                </ul>
+                
+                <div class="tab-content standards-content">
+                  <div class="tab-pane fade show active" id="standard-input" role="tabpanel"></div>
+                  <div class="tab-pane fade" id="section-size" role="tabpanel"></div>
+                  <div class="tab-pane fade" id="instruction-cycles" role="tabpanel"></div>
+                  <div class="tab-pane fade" id="formula-map" role="tabpanel">
+                    <div class="formula-editor-section">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5><i class="fas fa-code me-2"></i>Room Formula JSON</h5>
+                        <button id="toggleFormulaEdit" class="btn btn-outline-primary">
+                          <i class="fas fa-edit me-2"></i>Update Standards
+                        </button>
+                      </div>
+                      <textarea id="formulaMapEditor" class="form-control formula-editor" rows="20" readonly></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- School Details -->
+            <div class="tab-pane fade" id="details" role="tabpanel">
+              <div class="school-details-section">
+                <div class="row g-4 mb-4">
+                  <div class="col-lg-6 col-md-6">
+                    <div class="input-card">
+                      <label for="inputTotalEnrollment" class="form-label">
+                        <i class="fas fa-users me-2"></i>Total Enrollment
+                      </label>
+                      <input type="text" id="inputTotalEnrollment" class="form-control form-control-lg" value="">
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-md-6">
+                    <div class="input-card">
+                      <label for="inputSpecialEdEnrollment" class="form-label">
+                        <i class="fas fa-wheelchair me-2"></i>Special Education Enrollment
+                      </label>
+                      <input type="number" id="inputSpecialEdEnrollment" class="form-control form-control-lg" value="">
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Controls Section -->
+                <div class="controls-section">
+                  <div class="row align-items-center">
+                    <div class="col-md-6">
+                      <div class="filter-controls">
+                        <label class="form-label me-3" for="spaceGroupFilter">
+                          <i class="fas fa-filter me-2"></i>Filter by Space Group
+                        </label>
+                        <select class="form-select w-auto" id="spaceGroupFilter">
+                          <option value="">All Groups</option>
+                          <option value="Core_Academic_Spaces">Core Academic Spaces</option>
+                          <option value="Special_Education">Special Education</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                      <div class="action-buttons">
+                        <button class="btn btn-outline-secondary" onclick="reloadSchoolDetails()">
+                          <i class="fas fa-sync-alt me-2"></i>Reload
+                        </button>
+                        <button onclick="localStorage.removeItem('proposedEdits'); localStorage.removeItem('existingEdits'); location.reload();" 
+                                class="btn btn-danger">
+                          <i class="fas fa-trash me-2"></i>Clear Stored Edits
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="schoolDetailsTableContainer" class="table-container"></div>
+                
+                <!-- File Upload Section -->
+                <div class="file-upload-section mt-4">
+                  <div class="upload-card">
+                    <div class="upload-header">
+                      <i class="fas fa-upload me-2"></i>
+                      <h5 class="mb-0">Import School Details Data</h5>
+                    </div>
+                    <div class="upload-description">
+                      <p class="text-muted mb-3">
+                        Upload a CSV file to replace the current school details data. The file should contain columns for 
+                        <strong>Space Group</strong>, <strong>ROOM TYPE</strong>, <strong>Guideline Key</strong>, and other space planning data.
+                      </p>
+                      <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Tip:</strong> Use the "Download Template" button to get a properly formatted CSV file with sample data. 
+                        Fill it out and re-import for easy data entry.
+                      </div>
+                    </div>
+                    <div class="upload-controls">
+                      <div class="d-flex gap-2 mb-2">
+                        <button class="btn btn-outline-success btn-sm" onclick="exportSchoolDetailsTemplate()">
+                          <i class="fas fa-download me-2"></i>Download Template
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="exportCurrentSchoolData()">
+                          <i class="fas fa-file-export me-2"></i>Export Current Data
+                        </button>
+                      </div>
+                      <input type="file" id="schoolDetailsCSVInput" accept=".csv" class="form-control" />
+                      <button class="btn btn-outline-primary btn-sm mt-2" onclick="importSchoolDetailsCSV()">
+                        <i class="fas fa-file-import me-2"></i>Import Data
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Space Summary -->
+            <div class="tab-pane fade" id="summary" role="tabpanel">
+              <div class="summary-section">
+                <h3><i class="fas fa-chart-pie me-3"></i>Space Summary Dashboard</h3>
+                
+                <!-- Key Statistics Cards -->
+                <div class="stats-cards mb-4">
+                  <div class="row g-3">
+                    <div class="col-lg-3 col-md-6">
+                      <div class="stat-card enrollment-card">
+                        <div class="stat-icon">
+                          <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                          <h4 id="totalEnrollmentStat">0</h4>
+                          <p>Total Enrollment</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                      <div class="stat-card special-ed-card">
+                        <div class="stat-icon">
+                          <i class="fas fa-wheelchair"></i>
+                        </div>
+                        <div class="stat-content">
+                          <h4 id="specialEdStat">0</h4>
+                          <p>Special Education</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                      <div class="stat-card nsf-card">
+                        <div class="stat-icon">
+                          <i class="fas fa-ruler"></i>
+                        </div>
+                        <div class="stat-content">
+                          <h4 id="totalNSFStat">0</h4>
+                          <p>Total NSF (sq ft)</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                      <div class="stat-card gsf-card">
+                        <div class="stat-icon">
+                          <i class="fas fa-building"></i>
+                        </div>
+                        <div class="stat-content">
+                          <h4 id="totalGSFStat">0</h4>
+                          <p>Total GSF (sq ft)</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                  <div class="row g-4">
+                    <!-- Space Distribution by Group -->
+                    <div class="col-lg-6">
+                      <div class="chart-card">
+                        <h5><i class="fas fa-chart-pie me-2"></i>Space Distribution by Group</h5>
+                        <div class="chart-container">
+                          <canvas id="spaceGroupChart" width="400" height="300"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Guidelines vs Existing vs Proposed -->
+                    <div class="col-lg-6">
+                      <div class="chart-card">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Guidelines vs Existing vs Proposed</h5>
+                        <div class="chart-container">
+                          <canvas id="comparisonChart" width="400" height="300"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Space Efficiency Analysis -->
+                    <div class="col-lg-6">
+                      <div class="chart-card">
+                        <h5><i class="fas fa-chart-line me-2"></i>Space Efficiency Analysis</h5>
+                        <div class="chart-container">
+                          <canvas id="efficiencyChart" width="400" height="300"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Room Type Distribution -->
+                    <div class="col-lg-6">
+                      <div class="chart-card">
+                        <h5><i class="fas fa-chart-doughnut me-2"></i>Room Type Distribution</h5>
+                        <div class="chart-container">
+                          <canvas id="roomTypeChart" width="400" height="300"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Summary Table -->
+                <div class="summary-table-section mt-4">
+                  <div class="chart-card">
+                    <h5><i class="fas fa-table me-2"></i>Space Summary by Category</h5>
+                    <div class="table-responsive">
+                      <table class="table table-sm summary-table">
+                        <thead>
+                          <tr>
+                            <th>Space Category</th>
+                            <th>Guideline SF</th>
+                            <th>Existing SF</th>
+                            <th>Proposed SF</th>
+                            <th>Difference</th>
+                            <th>% Change</th>
+                          </tr>
+                        </thead>
+                        <tbody id="summaryTableBody">
+                          <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Admin -->
+            <div class="tab-pane fade" id="admin" role="tabpanel">
+              <div class="admin-section">
+                <h3><i class="fas fa-cogs me-3"></i>Calculation Overview</h3>
+                
+                <!-- Current Input Values -->
+                <div class="admin-card mb-4">
+                  <h5><i class="fas fa-info-circle me-2"></i>Current Input Values</h5>
+                  <div class="row g-3">
+                    <div class="col-md-3">
+                      <div class="input-summary">
+                        <label class="form-label">Total Enrollment</label>
+                        <div class="value-display" id="adminTotalEnrollment">0</div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="input-summary">
+                        <label class="form-label">Special Ed Enrollment</label>
+                        <div class="value-display" id="adminSpecialEdEnrollment">0</div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="input-summary">
+                        <label class="form-label">Total Students</label>
+                        <div class="value-display" id="adminTotalStudents">0</div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="input-summary">
+                        <label class="form-label">GSF Multiplier</label>
+                        <div class="value-display" id="adminGSFMultiplier">1.5</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Core Calculations -->
+                <div class="admin-card mb-4">
+                  <h5><i class="fas fa-calculator me-2"></i>Core Calculations</h5>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="calculation-group">
+                        <h6>Net Square Feet (NSF) Calculation</h6>
+                        <div class="formula-display">
+                          <code>NSF = Sum of all Guideline Total SF values</code>
+                        </div>
+                        <div class="calculation-breakdown">
+                          <div class="breakdown-item">
+                            <span class="label">Calculation Method:</span>
+                            <span class="value">Sum of (Guideline # Rooms × Guideline SF/Room) for all room types</span>
+                          </div>
+                          <div class="breakdown-item">
+                            <span class="label">Total NSF:</span>
+                            <span class="value" id="adminTotalNSF">0</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="calculation-group">
+                        <h6>Gross Square Feet (GSF) Calculation</h6>
+                        <div class="formula-display">
+                          <code>GSF = NSF × GSF Multiplier</code>
+                        </div>
+                        <div class="calculation-breakdown">
+                          <div class="breakdown-item">
+                            <span class="label">NSF Total:</span>
+                            <span class="value" id="adminTotalNSF">0</span>
+                          </div>
+                          <div class="breakdown-item">
+                            <span class="label">GSF Total:</span>
+                            <span class="value" id="adminAdjustedGSF">0</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section Size Calculations -->
+                <div class="admin-card mb-4">
+                  <h5><i class="fas fa-users me-2"></i>Section Size Calculations</h5>
+                  <div class="table-responsive">
+                    <table class="table table-sm admin-table">
+                      <thead>
+                        <tr>
+                          <th>Subject</th>
+                          <th>Section Size</th>
+                          <th>Formula</th>
+                          <th>Calculation</th>
+                        </tr>
+                      </thead>
+                      <tbody id="adminSectionSizes">
+                        <!-- Will be populated by JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Instruction Cycle Calculations -->
+                <div class="admin-card mb-4">
+                  <h5><i class="fas fa-clock me-2"></i>Instruction Cycle Calculations</h5>
+                  <div class="table-responsive">
+                    <table class="table table-sm admin-table">
+                      <thead>
+                        <tr>
+                          <th>Parameter</th>
+                          <th>Value</th>
+                          <th>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody id="adminInstructionCycles">
+                        <!-- Will be populated by JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Room Guideline Calculations -->
+                <div class="admin-card mb-4">
+                  <h5><i class="fas fa-door-open me-2"></i>Room Guideline Calculations</h5>
+                  <div class="table-responsive">
+                    <table class="table table-sm admin-table">
+                      <thead>
+                        <tr>
+                          <th>Room Type</th>
+                          <th>Guideline Key</th>
+                          <th>Formula</th>
+                          <th>Calculation</th>
+                          <th>Result</th>
+                        </tr>
+                      </thead>
+                      <tbody id="adminRoomGuidelines">
+                        <!-- Will be populated by JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Detailed Formula Breakdown -->
+                <div class="admin-card mb-4">
+                  <h5><i class="fas fa-code me-2"></i>Detailed Formula Breakdown</h5>
+                  
+                  <!-- Academic Spaces -->
+                  <div class="formula-group mb-4">
+                    <h6 class="formula-group-title">
+                      <i class="fas fa-graduation-cap me-2"></i>Academic Spaces
+                    </h6>
+                    <div class="formula-category">
+                      <h6>Classroom-Based Spaces (P1-P7)</h6>
+                      <div class="formula-explanation">
+                        <p><strong>Formula:</strong> <code>Rooms = (Total Students × Subject Percentage) ÷ Section Size</code></p>
+                        <p><strong>SF/Room:</strong> Fixed values from Space Standard Input</p>
+                        <div class="formula-examples">
+                          <div class="example-item">
+                            <span class="example-label">P3 - General Classrooms:</span>
+                            <span class="example-formula">(Total Students × 100%) ÷ Literature Section Size</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P6 - Science Labs:</span>
+                            <span class="example-formula">(Total Students × 85%) ÷ Science Section Size</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Special Education -->
+                  <div class="formula-group mb-4">
+                    <h6 class="formula-group-title">
+                      <i class="fas fa-wheelchair me-2"></i>Special Education Spaces
+                    </h6>
+                    <div class="formula-category">
+                      <h6>Resource Rooms (P12-P13)</h6>
+                      <div class="formula-explanation">
+                        <p><strong>Formula:</strong> <code>Rooms = Special Ed Students ÷ Small Group Size</code></p>
+                        <p><strong>SF/Room:</strong> Fixed values from Space Standard Input</p>
+                        <div class="formula-examples">
+                          <div class="example-item">
+                            <span class="example-label">P12 - Resource Room:</span>
+                            <span class="example-formula">Special Ed Students ÷ 6 students per room</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P13 - Small Group Room:</span>
+                            <span class="example-formula">Special Ed Students ÷ 4 students per room</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Support Spaces -->
+                  <div class="formula-group mb-4">
+                    <h6 class="formula-group-title">
+                      <i class="fas fa-hands-helping me-2"></i>Support & Administrative Spaces
+                    </h6>
+                    <div class="formula-category">
+                      <h6>Staff Spaces (P10-P11)</h6>
+                      <div class="formula-explanation">
+                        <p><strong>Formula:</strong> <code>Rooms = Total Students ÷ Students per Staff Member</code></p>
+                        <p><strong>SF/Room:</strong> Fixed values from Space Standard Input</p>
+                        <div class="formula-examples">
+                          <div class="example-item">
+                            <span class="example-label">P10 - Teacher Workroom:</span>
+                            <span class="example-formula">Total Students ÷ 25 students per teacher</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P11 - Conference Room:</span>
+                            <span class="example-formula">Total Students ÷ 100 students per conference room</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Specialized Spaces -->
+                  <div class="formula-group mb-4">
+                    <h6 class="formula-group-title">
+                      <i class="fas fa-palette me-2"></i>Specialized Program Spaces
+                    </h6>
+                    <div class="formula-category">
+                      <h6>Arts & Technology (P14-P20)</h6>
+                      <div class="formula-explanation">
+                        <p><strong>Formula:</strong> <code>Rooms = (Total Students × Program Percentage) ÷ Section Size</code></p>
+                        <p><strong>SF/Room:</strong> Fixed values from Space Standard Input</p>
+                        <div class="formula-examples">
+                          <div class="example-item">
+                            <span class="example-label">P14 - Art Room:</span>
+                            <span class="example-formula">(Total Students × 75%) ÷ Visual Art Section Size</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P15 - Music Room:</span>
+                            <span class="example-formula">(Total Students × 60%) ÷ Music Section Size</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P16 - Computer Lab:</span>
+                            <span class="example-formula">(Total Students × 90%) ÷ 25 students per lab</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Physical Education -->
+                  <div class="formula-group mb-4">
+                    <h6 class="formula-group-title">
+                      <i class="fas fa-running me-2"></i>Physical Education Spaces
+                    </h6>
+                    <div class="formula-category">
+                      <h6>Gym & Athletic Spaces (P21-P25)</h6>
+                      <div class="formula-explanation">
+                        <p><strong>Formula:</strong> <code>Rooms = (Total Students × PE Percentage) ÷ PE Section Size</code></p>
+                        <p><strong>SF/Room:</strong> Fixed values from Space Standard Input</p>
+                        <div class="formula-examples">
+                          <div class="example-item">
+                            <span class="example-label">P21 - Gymnasium:</span>
+                            <span class="example-formula">(Total Students × 100%) ÷ Physical Education Section Size</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P22 - Weight Room:</span>
+                            <span class="example-formula">(Total Students × 30%) ÷ 20 students per room</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Service Spaces -->
+                  <div class="formula-group">
+                    <h6 class="formula-group-title">
+                      <i class="fas fa-medkit me-2"></i>Service & Health Spaces
+                    </h6>
+                    <div class="formula-category">
+                      <h6>Health & Support Services (P26-P30)</h6>
+                      <div class="formula-explanation">
+                        <p><strong>Formula:</strong> <code>Rooms = Total Students ÷ Students per Service Provider</code></p>
+                        <p><strong>SF/Room:</strong> Fixed values from Space Standard Input</p>
+                        <div class="formula-examples">
+                          <div class="example-item">
+                            <span class="example-label">P26 - Health Office:</span>
+                            <span class="example-formula">Total Students ÷ 500 students per nurse</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P27 - Counseling Office:</span>
+                            <span class="example-formula">Total Students ÷ 250 students per counselor</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Data Sources -->
+                <div class="admin-card">
+                  <h5><i class="fas fa-database me-2"></i>Data Sources</h5>
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <div class="data-source">
+                        <h6>Academic Section Size</h6>
+                        <div class="source-info">
+                          <span class="source-label">File:</span>
+                          <span class="source-value">Academic_Section_Size.csv</span>
+                        </div>
+                        <div class="source-info">
+                          <span class="source-label">Records:</span>
+                          <span class="source-value" id="adminSectionSizeRecords">0</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="data-source">
+                        <h6>Instruction Cycles</h6>
+                        <div class="source-info">
+                          <span class="source-label">File:</span>
+                          <span class="source-value">Instruction_Cycles.csv</span>
+                        </div>
+                        <div class="source-info">
+                          <span class="source-label">Records:</span>
+                          <span class="source-value" id="adminInstructionCycleRecords">0</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="data-source">
+                        <h6>Space Standards</h6>
+                        <div class="source-info">
+                          <span class="source-label">File:</span>
+                          <span class="source-value">Space_Standard_Input.csv</span>
+                        </div>
+                        <div class="source-info">
+                          <span class="source-label">Records:</span>
+                          <span class="source-value" id="adminSpaceStandardRecords">0</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Script -->
+  <script>
+    // Make computeGuidelineRoomValues available globally
+    import('./formulas.js').then(module => {
+      window.computeGuidelineRoomValues = module.computeGuidelineRoomValues;
+    }).catch(error => {
+      console.error('Error importing computeGuidelineRoomValues:', error);
+    });
+    
+    async function loadCSVAndRenderTable(url, containerId, editableColumns = [], visibleColumns = []) {
+    console.log("🔄 Loading CSV:", url);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const text = await response.text();
+      console.log("📄 CSV content length:", text.length);
+    Papa.parse(text, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        const data = results.data;
+        console.log("✅ Loaded CSV:", url, "Rows:", data.length);
+
+        // ✅ Save data for formulas.js
+        if (url.includes("Academic_Section_Size.csv")) {
+          window.sectionCsvRows = data;
+          console.log("📊 Set sectionCsvRows:", data.length, "rows");
+        }
+        if (url.includes("Instruction_Cycles.csv")) {
+          window.instructionCycleRows = data;
+          console.log("📊 Set instructionCycleRows:", data.length, "rows");
+        }
+    // ✅ Add sync + render on input changes
+    if (["Academic_Section_Size.csv", "Instruction_Cycles.csv", "Space_Standard_Input.csv"].some(f => url.includes(f))) {
+      const containerId = {
+        "Academic_Section_Size.csv": "section-size",
+        "Instruction_Cycles.csv": "instruction-cycles",
+        "Space_Standard_Input.csv": "standard-input"
+      }[Object.keys(window).find(k => url.includes(k))];
+
+      const windowKey = {
+        "section-size": "sectionCsvRows",
+        "instruction-cycles": "instructionCycleRows",
+        "standard-input": "standardInputRows"
+      }[containerId];
+
+      // Event listeners are now handled in main.js after table rendering
+      // This ensures they persist through table re-renders
+    }
+
+        const table = document.createElement("table");
+        table.className = "table table-bordered table-hover table-sm data-table";
+
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        const allColumns = Object.keys(data[0]);
+        const columns = visibleColumns.length ? visibleColumns : allColumns;
+
+        columns.forEach(col => {
+          const th = document.createElement("th");
+          th.textContent = col;
+          th.className = "table-header";
+          headerRow.appendChild(th);
+        });
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        data.forEach((row, rowIndex) => {
+          const tr = document.createElement("tr");
+          columns.forEach(col => {
+            const td = document.createElement("td");
+            if (editableColumns.includes(col)) {
+              td.innerHTML = `<input type="text" class="form-control form-control-sm editable-input" value="${row[col] || ''}" data-row="${rowIndex}" data-col="${col}" />`;
+            } else {
+              td.style.fontWeight = editableColumns.includes(col) ? 'bold' : 'normal';
+              td.textContent = row[col];
+            }
+            td.style.whiteSpace = 'nowrap';
+            td.style.padding = '0.75rem';
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+        
+        // Add table-container class to the container for sticky headers
+        const container = document.getElementById(containerId);
+        container.classList.add('table-container');
+        
+        // Add disclaimer for Space Standard Input tab
+        if (containerId === "standard-input") {
+          const disclaimer = document.createElement("div");
+          disclaimer.className = "alert alert-warning mb-3";
+          disclaimer.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i><strong>Under Development:</strong> This tab is currently being developed and may not reflect final functionality.';
+          container.appendChild(disclaimer);
+        }
+        
+        container.appendChild(table);
+
+          // Add download button
+          const downloadBtn = document.createElement("button");
+          downloadBtn.className = "btn btn-outline-primary btn-sm mt-3";
+          downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download CSV';
+          downloadBtn.onclick = () => {
+            const csvRows = [];
+            csvRows.push(columns.join(","));
+            const tbodyRows = table.querySelectorAll("tbody tr");
+            tbodyRows.forEach(tr => {
+              const rowValues = [];
+              columns.forEach((col, i) => {
+                const td = tr.children[i];
+                const input = td.querySelector("input");
+                rowValues.push(input ? input.value : td.textContent);
+              });
+              csvRows.push(rowValues.map(val => `"${val}"`).join(","));
+            });
+            const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${url.split('/').pop().split('.')[0] || 'data'}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          };
+
+          document.getElementById(containerId).appendChild(downloadBtn);
+        }
+      });
+    } catch (error) {
+      console.error("❌ Error loading CSV:", url, error);
+      throw error;
+    }
+  }
+
+  </script>
+
+  <!-- File Upload Functions -->
+  <script>
+    // Import School Details CSV
+    window.importSchoolDetailsCSV = function() {
+      const fileInput = document.getElementById('schoolDetailsCSVInput');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        alert('Please select a CSV file first.');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          Papa.parse(e.target.result, {
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+              if (results.errors.length > 0) {
+                alert('Error parsing CSV: ' + results.errors[0].message);
+                return;
+              }
+              
+              // Filter out empty rows
+              const cleaned = results.data.filter(row => row["ROOM TYPE"]);
+              
+              // Clean numeric fields
+              const numericFields = [
+                "Guideline_Room_NFA",
+                "Guideline_#_Rooms", 
+                "Existing_Room_NFA",
+                "Existing_#_Rooms",
+                "Proposed_Keep_Room_NFA",
+                "Proposed_Keep_#_Rooms"
+              ];
+              
+              cleaned.forEach(row => {
+                numericFields.forEach(field => {
+                  if (row[field]) {
+                    row[field] = row[field].toString().replace(/,/g, "");
+                  }
+                });
+              });
+              
+              // Update the global data
+              window.schoolDetailsData = cleaned;
+              
+              // Clear any existing stored edits when importing new data
+              window.existingEdits = {};
+              window.proposedEdits = {};
+              localStorage.removeItem('existingEdits');
+              localStorage.removeItem('proposedEdits');
+              
+              // Update the filter options
+              populateSpaceGroupFilter(cleaned);
+              
+              // Re-render the table
+              renderSchoolDetailsTable();
+              
+              // Show success message
+              alert('School details data imported successfully! ' + cleaned.length + ' rows loaded.');
+              
+              // Clear the file input
+              fileInput.value = '';
+            }
+          });
+        } catch (error) {
+          alert('Error reading file: ' + error.message);
+        }
+      };
+      
+      reader.readAsText(file);
+    };
+    
+    // Import Guideline CSV
+    window.importGuidelineCSV = function() {
+      const fileInput = document.getElementById('inputGuidelineCSV');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        alert('Please select a CSV file first.');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          Papa.parse(e.target.result, {
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+              if (results.errors.length > 0) {
+                alert('Error parsing CSV: ' + results.errors[0].message);
+                return;
+              }
+              
+              // Store the guideline data
+              window.guidelineData = results.data;
+              
+              // Show success message
+              alert('Guideline parameters imported successfully! ' + results.data.length + ' rows loaded.');
+              
+              // Clear the file input
+              fileInput.value = '';
+            }
+          });
+        } catch (error) {
+          alert('Error reading file: ' + error.message);
+        }
+      };
+      
+      reader.readAsText(file);
+    };
+    
+    // Calculate Guidelines function (placeholder)
+    window.calculateGuidelines = function() {
+      if (!window.guidelineData) {
+        alert('Please import guideline parameters first.');
+        return;
+      }
+      
+      // This would contain the actual guideline calculation logic
+      alert('Guideline calculation would be performed here using the imported data.');
+    };
+    
+    // Export School Details Template
+    window.exportSchoolDetailsTemplate = function() {
+      const templateData = [
+        {
+          "Core_Academic_Spaces": "Core_Academic_Spaces",
+          "ROOM TYPE": "Classroom - General",
+          "Guideline Key": "P3",
+          "Guideline_Room_NFA": "850",
+          "Guideline_#_Rooms": "",
+          "Existing_Room_NFA": "850",
+          "Existing_#_Rooms": "20",
+          "Proposed_Keep_Room_NFA": "850",
+          "Proposed_Keep_#_Rooms": "20"
+        },
+        {
+          "Core_Academic_Spaces": "Core_Academic_Spaces",
+          "ROOM TYPE": "Science Classroom / Lab",
+          "Guideline Key": "P6",
+          "Guideline_Room_NFA": "1440",
+          "Guideline_#_Rooms": "",
+          "Existing_Room_NFA": "1440",
+          "Existing_#_Rooms": "8",
+          "Proposed_Keep_Room_NFA": "1440",
+          "Proposed_Keep_#_Rooms": "8"
+        },
+        {
+          "Core_Academic_Spaces": "Core_Academic_Spaces",
+          "ROOM TYPE": "Art Room",
+          "Guideline Key": "P14",
+          "Guideline_Room_NFA": "1200",
+          "Guideline_#_Rooms": "",
+          "Existing_Room_NFA": "1200",
+          "Existing_#_Rooms": "4",
+          "Proposed_Keep_Room_NFA": "1200",
+          "Proposed_Keep_#_Rooms": "4"
+        },
+        {
+          "Core_Academic_Spaces": "Special_Education",
+          "ROOM TYPE": "Resource Room",
+          "Guideline Key": "P12",
+          "Guideline_Room_NFA": "500",
+          "Guideline_#_Rooms": "",
+          "Existing_Room_NFA": "500",
+          "Existing_#_Rooms": "6",
+          "Proposed_Keep_Room_NFA": "500",
+          "Proposed_Keep_#_Rooms": "6"
+        },
+        {
+          "Core_Academic_Spaces": "Special_Education",
+          "ROOM TYPE": "Small Group Room",
+          "Guideline Key": "P13",
+          "Guideline_Room_NFA": "500",
+          "Guideline_#_Rooms": "",
+          "Existing_Room_NFA": "500",
+          "Existing_#_Rooms": "4",
+          "Proposed_Keep_Room_NFA": "500",
+          "Proposed_Keep_#_Rooms": "4"
+        }
+      ];
+      
+      downloadCSV(templateData, 'School_Details_Template.csv');
+    };
+    
+    // Export Current School Data
+    window.exportCurrentSchoolData = function() {
+      if (!window.schoolDetailsData || window.schoolDetailsData.length === 0) {
+        alert('No school details data available to export.');
+        return;
+      }
+      
+      // Create a copy of the data with edited values
+      const exportData = window.schoolDetailsData.map(row => {
+        const roomType = row["ROOM TYPE"];
+        const exportRow = { ...row };
+        
+        // Include existing edits
+        if (window.existingEdits[roomType]) {
+          if (window.existingEdits[roomType]["Existing_Room_NFA"] !== undefined) {
+            exportRow["Existing_Room_NFA"] = window.existingEdits[roomType]["Existing_Room_NFA"];
+          }
+          if (window.existingEdits[roomType]["Existing_#_Rooms"] !== undefined) {
+            exportRow["Existing_#_Rooms"] = window.existingEdits[roomType]["Existing_#_Rooms"];
+          }
+        }
+        
+        // Include proposed edits
+        if (window.proposedEdits[roomType]) {
+          if (window.proposedEdits[roomType]["Proposed_Keep_Room_NFA"] !== undefined) {
+            exportRow["Proposed_Keep_Room_NFA"] = window.proposedEdits[roomType]["Proposed_Keep_Room_NFA"];
+          }
+          if (window.proposedEdits[roomType]["Proposed_Keep_#_Rooms"] !== undefined) {
+            exportRow["Proposed_Keep_#_Rooms"] = window.proposedEdits[roomType]["Proposed_Keep_#_Rooms"];
+          }
+        }
+        
+        return exportRow;
+      });
+      
+      downloadCSV(exportData, 'School_Details_Export.csv');
+    };
+    
+    // Export Guideline Template
+    window.exportGuidelineTemplate = function() {
+      const templateData = [
+        {
+          "Room_Type": "Classroom - General",
+          "Capacity_Factor": "25",
+          "Usage_Percentage": "100",
+          "Min_SF_per_Room": "850",
+          "Max_SF_per_Room": "950",
+          "Utilization_Rate": "85"
+        },
+        {
+          "Room_Type": "Science Lab",
+          "Capacity_Factor": "20",
+          "Usage_Percentage": "85",
+          "Min_SF_per_Room": "1440",
+          "Max_SF_per_Room": "1600",
+          "Utilization_Rate": "80"
+        },
+        {
+          "Room_Type": "Art Room",
+          "Capacity_Factor": "25",
+          "Usage_Percentage": "75",
+          "Min_SF_per_Room": "1200",
+          "Max_SF_per_Room": "1400",
+          "Utilization_Rate": "70"
+        },
+        {
+          "Room_Type": "Music Room",
+          "Capacity_Factor": "30",
+          "Usage_Percentage": "60",
+          "Min_SF_per_Room": "1000",
+          "Max_SF_per_Room": "1200",
+          "Utilization_Rate": "65"
+        },
+        {
+          "Room_Type": "Computer Lab",
+          "Capacity_Factor": "25",
+          "Usage_Percentage": "90",
+          "Min_SF_per_Room": "1000",
+          "Max_SF_per_Room": "1200",
+          "Utilization_Rate": "85"
+        }
+      ];
+      
+      downloadCSV(templateData, 'Guideline_Parameters_Template.csv');
+    };
+    
+    // Export Current Guideline Data
+    window.exportCurrentGuidelineData = function() {
+      if (!window.guidelineData || window.guidelineData.length === 0) {
+        alert('No guideline data available to export.');
+        return;
+      }
+      
+      downloadCSV(window.guidelineData, 'Guideline_Parameters_Export.csv');
+    };
+    
+    // Generic CSV Download Function
+    function downloadCSV(data, filename) {
+      if (!data || data.length === 0) {
+        alert('No data available to export.');
+        return;
+      }
+      
+      // Get headers from first row
+      const headers = Object.keys(data[0]);
+      
+      // Create CSV content
+      const csvContent = [
+        headers.join(','),
+        ...data.map(row => 
+          headers.map(header => {
+            const value = row[header] || '';
+            // Escape quotes and wrap in quotes if contains comma or quote
+            const escaped = value.toString().replace(/"/g, '""');
+            return escaped.includes(',') || escaped.includes('"') || escaped.includes('\n') 
+              ? `"${escaped}"` 
+              : escaped;
+          }).join(',')
+        )
+      ].join('\n');
+      
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Show success message
+      alert(`Template exported successfully as ${filename}`);
+    }
+  </script>
+
+  <!-- Dashboard Functions -->
+  <script>
+    // Global chart instances
+    let spaceGroupChart, comparisonChart, efficiencyChart, roomTypeChart;
+    let dashboardUpdateTimeout = null;
+    let chartsInitialized = false;
+
+    // Global cleanup function
+    function destroyAllCharts() {
+      const charts = [spaceGroupChart, comparisonChart, efficiencyChart, roomTypeChart];
+      charts.forEach(chart => {
+        if (chart && typeof chart.destroy === 'function') {
+          try {
+            chart.destroy();
+          } catch (e) {
+            console.warn('Error destroying chart:', e);
+          }
+        }
+      });
+      spaceGroupChart = null;
+      comparisonChart = null;
+      efficiencyChart = null;
+      roomTypeChart = null;
+      chartsInitialized = false;
+    }
+
+    // Update dashboard statistics and charts
+    window.updateDashboard = function() {
+      // Clear any pending update
+      if (dashboardUpdateTimeout) {
+        clearTimeout(dashboardUpdateTimeout);
+      }
+      
+      // Debounce the update to prevent multiple rapid calls
+      dashboardUpdateTimeout = setTimeout(() => {
+        updateStatistics();
+        updateCharts();
+        updateSummaryTable();
+      }, 100);
+    };
+
+    // Calculate total NSF from school details table
+    window.calculateTotalNSFFromTable = function() {
+      console.log("🔄 calculateTotalNSFFromTable called");
+      if (!window.schoolDetailsData || window.schoolDetailsData.length === 0) {
+        console.log("⚠️ No school details data available");
+        return 0;
+      }
+      
+      let totalNSF = 0;
+      
+      // Get current enrollment values for calculations
+      const totalEnrollment = parseInt(document.getElementById("inputTotalEnrollment")?.value.replace(/,/g, "") || "0");
+      const specialEdEnrollment = parseInt(document.getElementById("inputSpecialEdEnrollment")?.value || "0");
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      
+      console.log("🔍 Enrollment Debug:", { totalEnrollment, specialEdEnrollment, totalStudents });
+      
+      // Get section size and instruction cycle data
+      const sectionSize = window.extractSectionSize ? window.extractSectionSize(window.sectionCsvRows || []) : 22;
+      const instructionCycles = window.extractInstructionCycles ? window.extractInstructionCycles(window.instructionCycleRows || []) : {};
+      
+      console.log("🔍 Data Debug:", { 
+        sectionSize: sectionSize.length, 
+        instructionCycles: instructionCycles.length,
+        instructionCyclesData: instructionCycles
+      });
+      
+      // Calculate guideline values for each room type
+      const inputs = {
+        totalEnrollment: totalEnrollment,
+        spedTotal: specialEdEnrollment,
+        sectionSize: sectionSize,
+        instructionCycles: instructionCycles,
+        sectionCsvRows: window.sectionCsvRows
+      };
+      
+      // Use updated room results if available, otherwise compute new ones
+      let roomResults = window.currentRoomResults;
+      console.log("🔍 Room results check:", { 
+        hasCachedResults: !!roomResults,
+        hasComputeFunction: typeof window.computeGuidelineRoomValues === 'function',
+        hasSectionData: !!window.sectionCsvRows,
+        hasInstructionData: !!window.instructionCycleRows
+      });
+      
+      if (!roomResults && typeof window.computeGuidelineRoomValues === 'function') {
+        // Check if we have the required data
+        if (window.sectionCsvRows && window.instructionCycleRows) {
+          roomResults = window.computeGuidelineRoomValues(inputs);
+          console.log("🔍 Computed new room results:", roomResults);
+        } else {
+          console.log("⚠️ Missing data for calculation, using fallback values:", {
+            sectionCsvRows: !!window.sectionCsvRows,
+            instructionCycleRows: !!window.instructionCycleRows
+          });
+          // Use fallback values to prevent zero NSF
+          roomResults = {
+            P3: Math.ceil(totalStudents / 22), // General classrooms
+            P4: Math.ceil(totalStudents / 22), // Teacher planning
+            P6: Math.ceil(totalStudents / 22 / 2), // Science labs
+            P10: Math.ceil(specialEdEnrollment / 22), // Special ed
+            P12: 2, // Resource rooms
+            P13: 2, // Small group rooms
+            P14: Math.ceil(totalStudents * 0.25 / 22), // Art rooms
+            P16: Math.ceil(totalStudents * 0.25 / 22), // Music rooms
+            P21: Math.ceil(totalStudents * 0.25 / 22), // Tech rooms
+            P22: Math.ceil(totalStudents * 0.5 / 23), // Tech shop
+            P26: 2, // Locker rooms
+            P44: Math.ceil(totalStudents / 250), // Interview rooms
+            P45: Math.ceil(totalStudents / 250), // Exam rooms
+            P53: totalStudents < 1000 ? 0 : 1, // AP office
+            P56: Math.ceil(totalStudents / 200) // Guidance offices
+          };
+          
+          // Calculate fallback NSF directly
+          const standardSFPerRoom = {
+            P3: 900, P4: 200, P6: 1200, P10: 900, P12: 300, P13: 300,
+            P14: 1200, P16: 1200, P21: 1200, P22: 1500, P26: 800,
+            P44: 150, P45: 150, P53: 200, P56: 200
+          };
+          
+          let fallbackNSF = 0;
+          Object.entries(roomResults).forEach(([key, rooms]) => {
+            const sf = standardSFPerRoom[key] || 900;
+            fallbackNSF += rooms * sf;
+          });
+          
+          console.log("🔍 Fallback NSF calculation:", fallbackNSF);
+          return fallbackNSF;
+        }
+      }
+      
+      // For now, use all data to match the table total exactly
+      // The filter logic can be refined later if needed
+      window.schoolDetailsData.forEach(row => {
+        const Pkey = row["Guideline Key"];
+        const guidelineSF = parseFloat(row["Guideline_Room_NFA"]) || 0;
+        
+        // Always use calculated room count based on current enrollment
+        let guidelineRooms = 0;
+        if (Pkey && typeof roomResults?.[Pkey] === "number" && !isNaN(roomResults[Pkey])) {
+          guidelineRooms = roomResults[Pkey];
+        }
+        
+        const totalGuidelineArea = guidelineRooms * guidelineSF;
+        totalNSF += totalGuidelineArea;
+      });
+      
+      return totalNSF;
+    }
+
+    // Update key statistics
+    function updateStatistics() {
+      const totalEnrollment = parseInt(document.getElementById("inputTotalEnrollment")?.value.replace(/,/g, "") || "0");
+      const specialEdEnrollment = parseInt(document.getElementById("inputSpecialEdEnrollment")?.value || "0");
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      
+      // Calculate NSF from school details table and GSF using the multiplier
+      let totalNSF = calculateTotalNSFFromTable();
+      let totalGSF = totalNSF * (window.gsfMultiplier || 1.5);
+
+      document.getElementById("totalEnrollmentStat").textContent = totalEnrollment.toLocaleString();
+      document.getElementById("specialEdStat").textContent = specialEdEnrollment.toLocaleString();
+      document.getElementById("totalNSFStat").textContent = totalNSF.toLocaleString();
+      document.getElementById("totalGSFStat").textContent = totalGSF.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 1});
+      
+      // Update header metrics
+      updateHeaderMetrics();
+    }
+    
+    // Update header metrics
+    window.updateHeaderMetrics = function() {
+      // Get enrollment values
+      const totalEnrollment = parseInt(document.getElementById("inputTotalEnrollment")?.value.replace(/,/g, "") || "0");
+      const specialEdEnrollment = parseInt(document.getElementById("inputSpecialEdEnrollment")?.value || "0");
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      
+      // Calculate NSF from school details table and GSF using the multiplier
+      const totalNSF = calculateTotalNSFFromTable();
+      const totalGSF = totalNSF * (window.gsfMultiplier || 1.5);
+      
+      const headerNSF = document.getElementById("headerTotalNSF");
+      const headerGSF = document.getElementById("headerTotalGSF");
+      
+      if (headerNSF) {
+        headerNSF.textContent = totalNSF.toLocaleString();
+      }
+      if (headerGSF) {
+        headerGSF.textContent = totalGSF.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 1});
+      }
+    }
+
+    // Update all charts
+    function updateCharts() {
+      if (!window.schoolDetailsData) return;
+
+      // Only update charts if we're on the summary tab
+      const summaryTab = document.querySelector('#summary-tab');
+      if (!summaryTab || !summaryTab.classList.contains('active')) {
+        return;
+      }
+
+      // Only create charts once per tab session
+      if (!chartsInitialized) {
+        createSpaceGroupChart();
+        createComparisonChart();
+        createEfficiencyChart();
+        createRoomTypeChart();
+        chartsInitialized = true;
+      }
+    }
+
+    // Create Space Distribution by Group Chart
+    function createSpaceGroupChart() {
+      const ctx = document.getElementById('spaceGroupChart');
+      if (!ctx) {
+        console.log('Space group chart canvas not found');
+        return;
+      }
+
+      // Destroy existing chart if it exists
+      if (spaceGroupChart && typeof spaceGroupChart.destroy === 'function') {
+        spaceGroupChart.destroy();
+        spaceGroupChart = null;
+      }
+
+      // Clear the canvas
+      const context = ctx.getContext('2d');
+      context.clearRect(0, 0, ctx.width, ctx.height);
+
+      const data = aggregateDataByGroup();
+      
+      // Don't create chart if no data
+      if (!data.labels || data.labels.length === 0) {
+        console.log('No data available for space group chart');
+        return;
+      }
+      
+      spaceGroupChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            data: data.guidelineValues,
+            backgroundColor: [
+              '#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6',
+              '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#16a085'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            title: {
+              display: true,
+              text: 'Space Distribution by Group (Guideline SF)'
+            }
+          },
+          layout: {
+            padding: {
+              top: 10,
+              bottom: 10
+            }
+          }
+        }
+      });
+    }
+
+    // Create Guidelines vs Existing vs Proposed Chart
+    function createComparisonChart() {
+      const ctx = document.getElementById('comparisonChart');
+      if (!ctx) {
+        console.log('Comparison chart canvas not found');
+        return;
+      }
+
+      // Destroy existing chart if it exists
+      if (comparisonChart && typeof comparisonChart.destroy === 'function') {
+        comparisonChart.destroy();
+        comparisonChart = null;
+      }
+
+      // Clear the canvas
+      const context = ctx.getContext('2d');
+      context.clearRect(0, 0, ctx.width, ctx.height);
+
+      const data = aggregateDataByGroup();
+      
+      // Don't create chart if no data
+      if (!data.labels || data.labels.length === 0) {
+        console.log('No data available for comparison chart');
+        return;
+      }
+      
+      comparisonChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [
+            {
+              label: 'Guideline SF',
+              data: data.guidelineValues,
+              backgroundColor: '#27ae60',
+              borderColor: '#229954',
+              borderWidth: 1
+            },
+            {
+              label: 'Existing SF',
+              data: data.existingValues,
+              backgroundColor: '#f39c12',
+              borderColor: '#e67e22',
+              borderWidth: 1
+            },
+            {
+              label: 'Proposed SF',
+              data: data.proposedValues,
+              backgroundColor: '#e74c3c',
+              borderColor: '#c0392b',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Square Feet'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Space Comparison by Group'
+            }
+          },
+          layout: {
+            padding: {
+              top: 10,
+              bottom: 10
+            }
+          }
+        }
+      });
+    }
+
+    // Create Space Efficiency Chart
+    function createEfficiencyChart() {
+      const ctx = document.getElementById('efficiencyChart');
+      if (!ctx) {
+        console.log('Efficiency chart canvas not found');
+        return;
+      }
+
+      // Destroy existing chart if it exists
+      if (efficiencyChart && typeof efficiencyChart.destroy === 'function') {
+        efficiencyChart.destroy();
+        efficiencyChart = null;
+      }
+
+      // Clear the canvas
+      const context = ctx.getContext('2d');
+      context.clearRect(0, 0, ctx.width, ctx.height);
+
+      const data = calculateEfficiencyMetrics();
+      
+      // Don't create chart if no data
+      if (!data.labels || data.labels.length === 0) {
+        console.log('No data available for efficiency chart');
+        return;
+      }
+      
+      efficiencyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [
+            {
+              label: 'Guideline Efficiency (SF/Student)',
+              data: data.guidelineEfficiency,
+              borderColor: '#27ae60',
+              backgroundColor: 'rgba(39, 174, 96, 0.1)',
+              tension: 0.4
+            },
+            {
+              label: 'Existing Efficiency (SF/Student)',
+              data: data.existingEfficiency,
+              borderColor: '#f39c12',
+              backgroundColor: 'rgba(243, 156, 18, 0.1)',
+              tension: 0.4
+            },
+            {
+              label: 'Proposed Efficiency (SF/Student)',
+              data: data.proposedEfficiency,
+              borderColor: '#e74c3c',
+              backgroundColor: 'rgba(231, 76, 60, 0.1)',
+              tension: 0.4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'SF per Student'
+              }
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Space Efficiency Analysis'
+            }
+          },
+          layout: {
+            padding: {
+              top: 10,
+              bottom: 10
+            }
+          }
+        }
+      });
+    }
+
+    // Create Room Type Distribution Chart
+    function createRoomTypeChart() {
+      const ctx = document.getElementById('roomTypeChart');
+      if (!ctx) {
+        console.log('Room type chart canvas not found');
+        return;
+      }
+
+      // Destroy existing chart if it exists
+      if (roomTypeChart && typeof roomTypeChart.destroy === 'function') {
+        roomTypeChart.destroy();
+        roomTypeChart = null;
+      }
+
+      // Clear the canvas
+      const context = ctx.getContext('2d');
+      context.clearRect(0, 0, ctx.width, ctx.height);
+
+      const data = aggregateDataByRoomType();
+      
+      // Don't create chart if no data
+      if (!data.labels || data.labels.length === 0) {
+        console.log('No data available for room type chart');
+        return;
+      }
+      
+      roomTypeChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            data: data.values,
+            backgroundColor: [
+              '#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6',
+              '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#16a085',
+              '#f1c40f', '#2ecc71', '#e74c3c', '#9b59b6', '#1abc9c'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 12
+              }
+            },
+            title: {
+              display: true,
+              text: 'Room Type Distribution (Proposed SF)'
+            }
+          },
+          layout: {
+            padding: {
+              top: 10,
+              bottom: 10
+            }
+          }
+        }
+      });
+    }
+
+    // Aggregate data by space group
+    function aggregateDataByGroup() {
+      const groups = {};
+      
+      window.schoolDetailsData.forEach(row => {
+        const group = row["Core_Academic_Spaces"] || "Other";
+        if (!groups[group]) {
+          groups[group] = {
+            guideline: 0,
+            existing: 0,
+            proposed: 0
+          };
+        }
+        
+        const guidelineSF = parseFloat(row["Guideline_Room_NFA"]) || 0;
+        const guidelineRooms = parseFloat(row["Guideline_#_Rooms"]) || 0;
+        const existingSF = parseFloat(row["Existing_Room_NFA"]) || 0;
+        const existingRooms = parseFloat(row["Existing_#_Rooms"]) || 0;
+        const proposedSF = parseFloat(row["Proposed_Keep_Room_NFA"]) || 0;
+        const proposedRooms = parseFloat(row["Proposed_Keep_#_Rooms"]) || 0;
+        
+        groups[group].guideline += guidelineSF * guidelineRooms;
+        groups[group].existing += existingSF * existingRooms;
+        groups[group].proposed += proposedSF * proposedRooms;
+      });
+
+      return {
+        labels: Object.keys(groups),
+        guidelineValues: Object.values(groups).map(g => g.guideline),
+        existingValues: Object.values(groups).map(g => g.existing),
+        proposedValues: Object.values(groups).map(g => g.proposed)
+      };
+    }
+
+    // Calculate efficiency metrics
+    function calculateEfficiencyMetrics() {
+      const totalEnrollment = parseInt(document.getElementById("inputTotalEnrollment")?.value.replace(/,/g, "") || "0");
+      const data = aggregateDataByGroup();
+      
+      return {
+        labels: data.labels,
+        guidelineEfficiency: data.guidelineValues.map(v => totalEnrollment > 0 ? v / totalEnrollment : 0),
+        existingEfficiency: data.existingValues.map(v => totalEnrollment > 0 ? v / totalEnrollment : 0),
+        proposedEfficiency: data.proposedValues.map(v => totalEnrollment > 0 ? v / totalEnrollment : 0)
+      };
+    }
+
+    // Aggregate data by room type
+    function aggregateDataByRoomType() {
+      const roomTypes = {};
+      
+      window.schoolDetailsData.forEach(row => {
+        const roomType = row["ROOM TYPE"] || "Unknown";
+        const proposedSF = parseFloat(row["Proposed_Keep_Room_NFA"]) || 0;
+        const proposedRooms = parseFloat(row["Proposed_Keep_#_Rooms"]) || 0;
+        
+        roomTypes[roomType] = (roomTypes[roomType] || 0) + (proposedSF * proposedRooms);
+      });
+
+      // Sort by value and take top 10
+      const sorted = Object.entries(roomTypes)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 10);
+
+      return {
+        labels: sorted.map(([label]) => label),
+        values: sorted.map(([,value]) => value)
+      };
+    }
+
+    // Update summary table
+    function updateSummaryTable() {
+      const tbody = document.getElementById('summaryTableBody');
+      if (!tbody) return;
+
+      const data = aggregateDataByGroup();
+      tbody.innerHTML = '';
+
+      data.labels.forEach((label, index) => {
+        const guideline = data.guidelineValues[index];
+        const existing = data.existingValues[index];
+        const proposed = data.proposedValues[index];
+        const difference = proposed - guideline;
+        const percentChange = guideline > 0 ? ((difference / guideline) * 100) : 0;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${label}</strong></td>
+          <td>${guideline.toLocaleString()}</td>
+          <td>${existing.toLocaleString()}</td>
+          <td>${proposed.toLocaleString()}</td>
+          <td class="${difference >= 0 ? 'positive' : 'negative'}">
+            ${difference >= 0 ? '+' : ''}${difference.toLocaleString()}
+          </td>
+          <td class="${percentChange >= 0 ? 'positive' : 'negative'}">
+            ${percentChange >= 0 ? '+' : ''}${percentChange.toFixed(1)}%
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+
+
+    // Initialize dashboard when summary tab is shown
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("DOM Content Loaded - initializing header metrics");
+      
+      // Try multiple times to ensure the function is called
+      setTimeout(() => {
+        if (typeof window.updateHeaderMetrics === 'function') {
+          console.log("Calling updateHeaderMetrics after 100ms");
+          window.updateHeaderMetrics();
+        }
+      }, 100);
+      
+      setTimeout(() => {
+        if (typeof window.updateHeaderMetrics === 'function') {
+          console.log("Calling updateHeaderMetrics after 500ms");
+          window.updateHeaderMetrics();
+        }
+      }, 500);
+      
+      setTimeout(() => {
+        if (typeof window.updateHeaderMetrics === 'function') {
+          console.log("Calling updateHeaderMetrics after 1000ms");
+          window.updateHeaderMetrics();
+        }
+      }, 1000);
+      
+      // Also update when enrollment inputs change
+      const enrollmentInput = document.getElementById("inputTotalEnrollment");
+      const specialEdInput = document.getElementById("inputSpecialEdEnrollment");
+      
+      if (enrollmentInput) {
+        enrollmentInput.addEventListener("input", function() {
+          if (typeof window.updateHeaderMetrics === 'function') {
+            window.updateHeaderMetrics();
+          }
+          if (typeof window.updateAdminPanel === 'function') {
+            window.updateAdminPanel();
+          }
+        });
+      }
+      
+      if (specialEdInput) {
+        specialEdInput.addEventListener("input", function() {
+          if (typeof window.updateHeaderMetrics === 'function') {
+            window.updateHeaderMetrics();
+          }
+          if (typeof window.updateAdminPanel === 'function') {
+            window.updateAdminPanel();
+          }
+        });
+      }
+      
+      const summaryTab = document.querySelector('#summary-tab');
+      if (summaryTab) {
+        summaryTab.addEventListener('shown.bs.tab', function() {
+          // Clean up all charts first
+          destroyAllCharts();
+          
+          setTimeout(() => {
+            updateDashboard();
+          }, 300);
+        });
+      }
+      
+      const adminTab = document.querySelector('#admin-tab');
+      if (adminTab) {
+        adminTab.addEventListener('shown.bs.tab', function() {
+          setTimeout(() => {
+            if (typeof window.updateAdminPanel === 'function') {
+              window.updateAdminPanel();
+            }
+          }, 300);
+        });
+      }
+    });
+  </script>
+
+  <!-- Password Check Function -->
+  <script>
+    function checkPassword() {
+      const password = document.getElementById('passwordInput').value;
+      const errorDiv = document.getElementById('passwordError');
+      
+      if (password === 'k12') {
+        // Hide password overlay
+        document.getElementById('passwordOverlay').style.display = 'none';
+        // Show main content
+        document.getElementById('mainContent').style.display = 'block';
+        // Focus on the first input for better UX
+        setTimeout(() => {
+          const firstInput = document.getElementById('inputTotalEnrollment');
+          if (firstInput) firstInput.focus();
+        }, 100);
+      } else {
+        // Show error message
+        errorDiv.style.display = 'block';
+        // Clear password input
+        document.getElementById('passwordInput').value = '';
+        // Focus back on password input
+        document.getElementById('passwordInput').focus();
+      }
+    }
+    
+    // Allow Enter key to submit password
+    document.addEventListener('DOMContentLoaded', function() {
+      const passwordInput = document.getElementById('passwordInput');
+      if (passwordInput) {
+        passwordInput.focus();
+      }
+    });
+  </script>
+
+  </div> <!-- Close mainContent div -->
+<script type="module" src="main.js"></script>
+</body>
+</html>

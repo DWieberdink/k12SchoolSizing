@@ -1,0 +1,68 @@
+[
+  {
+    "room_type": "Classroom - General",
+    "guideline_nfa": 850,
+    "guideline_rooms_formula": "(Math.ceil(P6 / REF / (IC.B5/IC.B4)) - P6 - P14 - P21 - P22 < 0, 1, Math.ceil(inputs.totalEnrollment / AC.G3 / (IC.B5 / IC.B4)))",
+    "area_total_formula": "P3*O3"
+  },
+  {
+    "room_type": "Teacher Planning",
+    "guideline_nfa": 100,
+    "guideline_rooms_formula": "P3",
+    "area_total_formula": "P4*O4"
+  },
+  {
+    "room_type": "Small Group Seminar (20-30 seats)",
+    "guideline_nfa": 500,
+    "guideline_rooms_formula": "Math.ceil(inputs.totalEnrollment/500,0)",
+    "area_total_formula": "P5*O5"
+  },
+  {
+    "room_type": "Science Classroom / Lab",
+    "guideline_nfa": 1440,
+    "guideline_rooms_formula": "Math.ceil(((inputs.totalEnrollment / AC.G6) / (IC.B5 / IC.B4)) * (IC.B2 / IC.B3), 0)",
+    "area_total_formula": "P6*O6"
+  },
+  {
+    "room_type": "Prep Room",
+    "guideline_nfa": 200,
+    "guideline_rooms_formula": "Math.ceil(P6/2,0)",
+    "area_total_formula": "P7*O7"
+  },
+  {
+    "room_type": "Resource Room",
+    "guideline_nfa": 500,
+    "guideline_rooms_formula": "2 + Math.ceil(((inputs.totalEnrollment + inputs.specialEdEnrollment) - 600) / 400)",
+    "area_total_formula": "P12*O12"
+  },
+  {
+    "room_type": "Tech Shop - (E.G. Consumer, Wood)",
+    "guideline_nfa": 2000,
+    "guideline_rooms_formula": "Math.max(1, Math.ceil(((inputs.totalEnrollment * 0.5 / 23) * (5 / 30)) - 1))",
+    "area_total_formula": "P22*O22"
+  },
+  {
+    "room_type": "Interview Room",
+    "guideline_nfa": 100,
+    "guideline_rooms_formula": "(1 + ROUND((inputs.totalEnrollment - 600) / 400, 0) = -1, 1, 1 + ROUND((inputs.totalEnrollment - 600) / 400, 0))",
+    "area_total_formula": "P44*O44"
+  },
+  {
+    "room_type": "Examination Room / Resting",
+    "guideline_nfa": 100,
+    "guideline_rooms_formula": "Math.ceil(inputs.totalEnrollment / 250, 0)",
+    "area_total_formula": "P45*O45"
+  },
+  {
+    "room_type": "Assistant Principal's Office - AP2",
+    "guideline_nfa": 150,
+    "guideline_rooms_formula": "(inputs.totalEnrollment < 1000, 0, 1 + Math.floor((inputs.totalEnrollment - 1000) / 400, 0))",
+    "area_total_formula": "P53*O53"
+  },
+  {
+    "room_type": "Guidance Office",
+    "guideline_nfa": 150,
+    "guideline_rooms_formula": "Math.ceil(inputs.totalEnrollment / 200, 0)",
+    "area_total_formula": "P56*O56"
+  }
+]

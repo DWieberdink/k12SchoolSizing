@@ -1,0 +1,69 @@
+Guideline Key,Core_Academic_Spaces,ROOM TYPE,Existing_Room_NFA,Existing_#_Rooms,Existing_Area_Totals,Proposed_Keep_Room_NFA,Proposed_Keep_#_Rooms,Proposed_Keep_Area_Totals,Proposed_New_Room_NFA,Proposed_New_#_Rooms,Proposed_New_Area_Totals,Totals_Proposed_ROOMNFA,Totals_Proposed_#_OF_RMS,Totals_Proposed_Area_Totals,Guideline_Room_NFA,Guideline_#_Rooms,Guideline_Area_Totals,Comments
+P2,Core Academic Spaces,List classrooms of different sizes separately,0,0,0,0,0,0,,,0,0,0,0,,,,
+P3,Core Academic Spaces,Classroom - General ,850,15,"12,750",850,15,"12,750",850,220,"187,000","1,700",235,"199,750",850,1,850,825 SF min - 950 SF max
+P4,Core Academic Spaces,Teacher Planning,100,312,"31,200",81,57,"4,617",19,57,"1,083",100,114,"5,700",100,1,100,
+P5,Core Academic Spaces,Small Group Seminar (20-30 seats),36,8,288,5,20,100,25,10,250,30,30,350,500,8,"4,000",
+P6,Core Academic Spaces,Science Classroom / Lab,"1,440",2,"2,880","1,440",2,"2,880","1,440",11,"15,840","2,880",13,"18,720","1,440",43,"61,920",3 x85% ut=20 Seats-1 per /day/student 
+P7,Core Academic Spaces,Prep Room,,,0,,,0,,,0,0,0,0,200,22,"4,400",
+P8,Core Academic Spaces,Central Chemical Storage Rm,,,0,,,0,,,0,0,0,0,200,1,200,
+P9,Special Education,List classrooms of different sizes separately,,,0,,,0,,,0,0,0,0,,,,
+P10,Special Education,Self-Contained SPED,,,0,,,0,,,0,0,0,0,950,12,"11,400",assumed 8% of pop. in self-contained SPED
+P11,Special Education,Self-Contained SPED Toilet,,,0,,,0,,,0,0,0,0,60,12,720,
+P12,Special Education,Resource Room,,,0,,,0,,,0,0,0,0,500,11,"5,500",1/2 size Genl. Clrm.
+P13,Special Education,Small Group Room,,,0,,,0,,,0,0,0,0,500,11,"5,500",1/2 size Genl. Clrm.
+P14,Art & Music,Art Classroom - 25 seats,,,0,,,0,,,0,0,0,0,"1,200",7,"8,400",Assumed use - 25% Population - 5 times/week
+P15,Art & Music,Art Workroom w/ Storage & kiln,,,0,,,0,,,0,0,0,0,150,7,"1,050",
+P16,Art & Music,Band - 50 - 100 seats,,,0,,,0,,,0,0,0,0,"1,500",7,"10,500",Assumed use - 25% Population - 5 times/week
+P17,Art & Music,Chorus - 50 - 100 seats,,,0,,,0,,,0,0,0,0,"1,500",7,"10,500",
+P18,Art & Music,Ensemble,,,0,,,0,,,0,0,0,0,200,1,200,
+P19,Art & Music,Music Practice,,,0,,,0,,,0,0,0,0,75,19,"1,425",
+P20,Art & Music,Music Storage,,,0,,,0,,,0,0,0,0,500,1,500,
+P21,Vocations & Technology,"Tech Clrm. -  (E.G. Drafting, Business)",,,0,,,0,,,0,0,0,0,"1,200",7,"8,400",Assumed use - 50% Population - 5 times/week
+P22,Vocations & Technology,"Tech Shop -  (E.G. Consumer, Wood)",,,0,,,0,,,0,0,0,0,"2,000",14,"28,000",Assumed use - 50% Population - 5 times/week
+P23,Health & Physical Education,Gymnasium ,,,0,,,0,,,0,0,0,0,"12,000",1,"12,000",
+P24,Health & Physical Education,PE Alternatives,50,10,500,,,0,,,0,0,0,0,"3,000",1,"3,000",
+P25,Health & Physical Education,Gym Storeroom,"8,000",1,"8,000",,,0,,,0,0,0,0,300,1,300,
+P26,Health & Physical Education,Locker Rooms - Boys / Girls w/ Toilets,"5,000",1,"5,000","5,000",1,"5,000","2,500",1,"2,500","7,500",2,"7,500","22,781",1,"22,781",5.6 sf/student total
+P27,Health & Physical Education,Phys. Ed. Storage,500,1,500,,,0,,,0,0,0,0,500,1,500,
+P28,Health & Physical Education,Athletic Director's Office,150,1,150,,,0,,,0,0,0,0,150,1,150,
+P29,Health & Physical Education,Health Instructor's Office w/ Shower & Toilet,,,0,,,0,,,0,0,0,0,250,1,250,
+P30,Media Center,Media Center / Reading Room,,,0,,,0,,,0,0,0,0,"25,325",1,"25,325",
+P31,Media Center,Computer Lab,,,0,,,0,,,0,0,0,0,,,,
+P32,Auditorium / Drama,Auditorium,,,0,,,0,,,0,0,0,0,"7,500",1,"7,500",2/3 Enrollment @ 10 SF/Seat - 750 seats MAX
+P33,Auditorium / Drama,Stage,,,0,,,0,,,0,0,0,0,"1,600",1,"1,600",
+P34,Auditorium / Drama,Auditorium Storage,,,0,,,0,,,0,0,0,0,500,1,500,
+P35,Auditorium / Drama,Make-up / Dressing Rooms,,,0,,,0,,,0,0,0,0,300,2,600,
+P36,Auditorium / Drama,Controls / Lighting / Projection,,,0,,,0,,,0,0,0,0,200,1,200,
+P37,Dining & Food Service,Cafeteria / Student Lounge / Break-out,"7,000",1,"7,000","7,000",1,"7,000","1,010",1,"1,010","8,010",2,"8,010","30,510",1,"30,510", 3 seatings - 15SF per seat
+P38,Dining & Food Service,Chair / Table Storage,,,0,,,0,,,0,0,0,0,"1,167",1,"1,167",
+P39,Dining & Food Service,Scramble Serving Area,,,0,,,0,,,0,0,0,0,600,1,600,
+P40,Dining & Food Service,Kitchen,,,0,,,0,,,0,0,0,0,"5,368",1,"5,368",1600 SF for first 300 + 1 SF/student Add'l
+P41,Dining & Food Service,Staff Lunch Room,,,0,,,0,,,0,0,0,0,"1,267",1,"1,267",20 SF/Occupant
+P42,Medical,Medical Suite Toilet,,,0,,,0,,,0,0,0,0,60,1,60,
+P43,Medical,Nurses' Office / Waiting Room,,,0,,,0,,,0,0,0,0,250,1,250,
+P44,Medical,Interview Room,,,0,,,0,,,0,0,0,0,100,10,"1,000",
+P45,Medical,Examination Room / Resting,,,0,,,0,,,0,0,0,0,100,16,"1,600",
+P46,Administration & Guidance,General Office / Waiting Room / Toilet,,,0,,,0,,,0,0,0,0,"2,034",1,"2,034",
+P47,Administration & Guidance,Teachers' Mail and Time Room,,,0,,,0,,,0,0,0,0,100,1,100,
+P48,Administration & Guidance,Duplicating Room,,,0,,,0,,,0,0,0,0,200,1,200,
+P49,Administration & Guidance,Records Room,,,0,,,0,,,0,0,0,0,200,1,200,
+P50,Administration & Guidance,Principal's Office w/ Conference Area,,,0,,,0,,,0,0,0,0,375,1,375,
+P51,Administration & Guidance,Principal's Secretary / Waiting  ,,,0,,,0,,,0,0,0,0,125,1,125,
+P52,Administration & Guidance,Assistant Principal's Office - AP1,,,0,,,0,,,0,0,0,0,150,1,150,
+P53,Administration & Guidance,Assistant Principal's Office - AP2,,,0,,,0,,,0,0,0,0,150,8,"1,200",
+P54,Administration & Guidance,Supervisory / Spare Office,,,0,,,0,,,0,0,0,0,120,1,120,
+P55,Administration & Guidance,Conference Room,,,0,,,0,,,0,0,0,0,450,1,450,
+P56,Administration & Guidance,Guidance Office,,,0,,,0,,,0,0,0,0,150,20,"3,000",
+P57,Administration & Guidance,Guidance Waiting Room,,,0,,,0,,,0,0,0,0,100,1,100,
+P58,Administration & Guidance,Guidance Storeroom,,,0,,,0,,,0,0,0,0,100,1,100,
+P59,Administration & Guidance,Career Center,,,0,,,0,,,0,0,0,0,"1,167",1,"1,167",
+P60,Administration & Guidance,Records Room,,,0,,,0,,,0,0,0,0,534,1,534,
+P61,Administration & Guidance,Teachers' Work Room,,,0,,,0,,,0,0,0,0,"2,034",1,"2,034",
+P62,Custodial & Maintenance,Custodian's Office,,,0,,,0,,,0,0,0,0,150,1,150,
+P63,Custodial & Maintenance,Custodian's Workshop,,,0,,,0,,,0,0,0,0,250,1,250,
+P64,Custodial & Maintenance,Custodian's Storage,,,0,,,0,,,0,0,0,0,375,1,375,
+P65,Custodial & Maintenance,Recycling Room / Trash,,,0,,,0,,,0,0,0,0,400,1,400,
+P66,Custodial & Maintenance,Receiving and General Supply,,,0,,,0,,,0,0,0,0,"1,167",1,"1,167",
+P67,Custodial & Maintenance,Storeroom,,,0,,,0,,,0,0,0,0,"2,134",1,"2,134",
+P68,Custodial & Maintenance,Network / Telecom Room,,,0,,,0,,,0,0,0,0,200,1,200,
+P69,Other,Other (specify),,,0,,,0,,,0,0,0,0,,,,

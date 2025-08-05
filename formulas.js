@@ -73,19 +73,22 @@ export function computeGuidelineRoomValues(inputs) {
 
   // P15 Art workroom
         P.P15 = P.P14; 
-  // // P16 Music Rooms
   
-// ✅ P16 - Music Rooms Calculation
-      const musicSectionSize = sectionSizes.music > 0 ? sectionSizes.music : sectionSize;
-      const musicPercent = getPercentEnrolledFor("Music", inputs.sectionCsvRows);
+  // ✅ P16 - Band 50-100 seats Calculation
+  const musicSectionSize = sectionSizes.music > 0 ? sectionSizes.music : sectionSize;
+  const bandVisualArtsPercent = getPercentEnrolledFor("Visual Art", inputs.sectionCsvRows);
 
-      P.P16 = Math.ceil(
-        ((totalEnrollment * musicPercent) / musicSectionSize) * 
-        (instructionCycles.B2 / instructionCycles.B3)
-      );
+  P.P16 = Math.ceil(
+    ((totalEnrollment * bandVisualArtsPercent) / musicSectionSize) * 
+    (instructionCycles.B2 / instructionCycles.B3)
+  );
 
-// ✅ P17 - Chorus Rooms Calculation
-  P.P17 = P.P16; 
+  // ✅ P17 - Chorus 50-100 seats Calculation
+  // Uses same formula as P16: visual arts percent, music section size, and instruction cycles
+  P.P17 = Math.ceil(
+    ((totalEnrollment * bandVisualArtsPercent) / musicSectionSize) * 
+    (instructionCycles.B2 / instructionCycles.B3)
+  ); 
 
 // ✅ P18 - Ensemble Calculations
   P.P18 = 1;
@@ -99,26 +102,19 @@ export function computeGuidelineRoomValues(inputs) {
 const designTechnologyPercent = getPercentEnrolledFor("Design Technology or Sim", inputs.sectionCsvRows);
 
 P.P21 = Math.ceil(((totalEnrollment * designTechnologyPercent) / sectionSizes.designTechnology) * (instructionCycles.B2 / instructionCycles.B3));
-// ✅ P22 - Tech Shop - uses Design Technology Percent_Enrolled
-  const techShopPercent = getPercentEnrolledFor("Design Technology or Sim", inputs.sectionCsvRows);
-  P.P22 = Math.max(1, Math.ceil((totalEnrollment * techShopPercent / 23) * (5 / 30)) - 1);
+// ✅ P22 - Tech Shop (e.g. wood)
+  // Formula: IF(ROUNDUP(((enrollment + special ed enrollment)*0.5/23)*(5/30),0)-1=-1,1,ROUNDUP(((enrollment + special ed enrollment)*0.5/23)*(5/30),0)-1)
+  const techShopCalculation = Math.ceil(((totalEnrollment + spedTotal) * 0.5 / 23) * (5 / 30)) - 1;
+  P.P22 = techShopCalculation === -1 ? 1 : techShopCalculation;
 // ✅ P23 - Gymnasium
   P.P23 = 1;
 // ✅ P24 - Physical Education Alternates
   P.P24 = 1;
 // ✅ P25 - Gymnasium Storage
   P.P25 = 1;
-// ✅ P26 - locker rooms - calculate number of rooms needed
-  // Based on typical high school: 1-2 locker rooms (boys/girls)
-  // For very large schools, may need additional locker rooms
-  const totalStudents = totalEnrollment + spedTotal;
-  if (totalStudents <= 1000) {
-    P.P26 = 2; // Boys and Girls locker rooms
-  } else if (totalStudents <= 2000) {
-    P.P26 = 3; // Additional locker room for larger school
-  } else {
-    P.P26 = 4; // Multiple locker rooms for very large school
-  }
+// ✅ P26 - Locker Rooms - Boys / Girls w/ Toilets
+  // Always 1 room, square footage calculated as total enrollment × 5.6 SF per student
+  P.P26 = 1; // Always 1 locker room
 // ✅ P27 - Phys Ed Storage
   P.P27 = 1;
 // ✅ P28 - Directors Office
@@ -126,7 +122,8 @@ P.P21 = Math.ceil(((totalEnrollment * designTechnologyPercent) / sectionSizes.de
 // ✅ P29 - Health Office
   P.P29 = 1;
 // ✅ P30 - Media Center
-  P.P30 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
+  // Always 1 room, but SF per room calculated dynamically
+  P.P30 = 1; // Always 1 media center room
 // ✅ P31 - Computer Lab
   P.P31 = 1;
 // ✅ P32 - Auditorium - 2/3 Enrollment @ 10 SF/Seat - 750 seats MAX
@@ -139,16 +136,21 @@ P.P21 = Math.ceil(((totalEnrollment * designTechnologyPercent) / sectionSizes.de
    P.P35 = 2;
 // ✅ P36 - Control Room/Lighting
   P.P36 = 1;
-// ✅ P37 - Cafeteria/Student Lounge/Break-out -  3 seatings - 15SF per seat
-  P.P37 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
+// ✅ P37 - Cafeteria/Student Lounge/Break-out
+  // Formula: (Total Enrollment + Special Ed Enrollment) / Number of Lunch Periods * 15 SF per seat
+  // Always 1 room, but SF per room calculated dynamically
+  P.P37 = 1; // Always 1 cafeteria room
 // ✅ P38 - Chair and Table Storage
-  P.P38 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
+  // Always 1 room, but SF per room calculated dynamically
+  P.P38 = 1; // Always 1 storage room
   // ✅ P39 - Scramble service area
     P.P39 = 1;
-// ✅ P40 - Kitchen - 1600 SF for first 300 + 1 SF/student Add'l
-  P.P40 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
-// ✅ P41 - Staff lunch per occupant - 20 SF/Occupant
-  P.P41 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
+// ✅ P40 - Kitchen
+  // Always 1 room, but SF per room calculated dynamically
+  P.P40 = 1; // Always 1 kitchen room
+// ✅ P41 - Staff Lunch Room
+  // Always 1 room, but SF per room calculated dynamically
+  P.P41 = 1; // Always 1 staff lunch room
 // ✅ P42 - Medical Suite Toilet
   P.P42 = 1;
 // ✅ P43 - Nurses office waiting room
@@ -158,7 +160,8 @@ P.P21 = Math.ceil(((totalEnrollment * designTechnologyPercent) / sectionSizes.de
 // ✅ P45 - Examination Room
   P.P45 = Math.ceil(totalEnrollment / 250);
 // ✅ P46 - General Office/Waiting Room/Toilet
-  P.P46 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
+  // Always 1 room, but SF per room calculated dynamically
+  P.P46 = 1; // Always 1 general office room
   // ✅ P47 - Teachers mail and time room
   P.P47 = 1;
 // ✅ P48 - Duplicating Room
@@ -184,11 +187,14 @@ P.P21 = Math.ceil(((totalEnrollment * designTechnologyPercent) / sectionSizes.de
 // ✅ P58 - Guidance Store room
   P.P58 = 1;
 // ✅ P59 - Career Center
-  P.P59 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
-// Records Room
-  P.P60 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
-// ✅ P61 - Teachers work room
-  P.P61 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
+  // Always 1 room, but SF per room calculated dynamically
+  P.P59 = 1; // Always 1 career center room
+// ✅ P60 - Records Room
+  // Always 1 room, but SF per room calculated dynamically
+  P.P60 = 1; // Always 1 records room
+// ✅ P61 - Teachers Work Room
+  // Always 1 room, but SF per room calculated dynamically
+  P.P61 = 1; // Always 1 teachers work room
   // ✅ P62 - Custodian Office
   P.P62 = 1;
   // Custodians Workshop
@@ -198,9 +204,11 @@ P.P21 = Math.ceil(((totalEnrollment * designTechnologyPercent) / sectionSizes.de
   // ✅ P65 - Recycling Trashh
   P.P65 = 1;
   // ✅ P66 - Receiving and General Supply
-  P.P66 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
+  // Always 1 room, but SF per room calculated dynamically
+  P.P66 = 1; // Always 1 receiving and general supply room
   // ✅ P67 - Store Room
-  P.P67 = 1; // Fixed: Should be 1 room, not calculated based on enrollment
+  // Always 1 room, but SF per room calculated dynamically
+  P.P67 = 1; // Always 1 store room
   // ✅ P68 - Network Telecom
   P.P68 = 1;
   

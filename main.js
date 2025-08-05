@@ -545,15 +545,85 @@ function updateAdminRoomGuidelines() {
         
         const roomResults = computeGuidelineRoomValues(inputs);
         
+        // Create a mapping of P-codes to their actual descriptions
+        const pCodeDescriptions = {
+            'P3': 'Classroom - General',
+            'P4': 'Teacher Planning',
+            'P5': 'Small Group Seminar (20-30 seats)',
+            'P6': 'Science Classroom / Lab',
+            'P7': 'Prep Room',
+            'P8': 'Central Chemical Storage Rm',
+            'P10': 'Self-Contained SPED',
+            'P11': 'Self-Contained SPED Toilet',
+            'P12': 'Resource Room',
+            'P13': 'Small Group Room',
+            'P14': 'Art Classroom - 25 seats',
+            'P15': 'Art Workroom w/ Storage & kiln',
+            'P16': 'Band - 50 - 100 seats',
+            'P17': 'Chorus - 50 - 100 seats',
+            'P18': 'Ensemble',
+            'P19': 'Music Practice',
+            'P20': 'Music Storage',
+            'P21': 'Tech Clrm. - (E.G. Drafting, Business)',
+            'P22': 'Tech Shop - (E.G. Consumer, Wood)',
+            'P23': 'Gymnasium',
+            'P24': 'PE Alternatives',
+            'P25': 'Gym Storeroom',
+            'P26': 'Locker Rooms - Boys / Girls w/ Toilets',
+            'P27': 'Phys. Ed. Storage',
+            'P28': 'Athletic Director\'s Office',
+            'P29': 'Health Instructor\'s Office w/ Shower & Toilet',
+            'P30': 'Media Center / Reading Room',
+            'P31': 'Computer Lab',
+            'P32': 'Auditorium',
+            'P33': 'Stage',
+            'P34': 'Auditorium Storage',
+            'P35': 'Make-up / Dressing Rooms',
+            'P36': 'Controls / Lighting / Projection',
+            'P37': 'Cafeteria / Student Lounge / Break-out',
+            'P38': 'Chair / Table Storage',
+            'P39': 'Scramble Serving Area',
+            'P40': 'Kitchen',
+            'P41': 'Staff Lunch Room',
+            'P42': 'Medical Suite Toilet',
+            'P43': 'Nurses\' Office / Waiting Room',
+            'P44': 'Interview Room',
+            'P45': 'Examination Room / Resting',
+            'P46': 'General Office / Waiting Room / Toilet',
+            'P47': 'Teachers\' Mail and Time Room',
+            'P48': 'Duplicating Room',
+            'P49': 'Records Room',
+            'P50': 'Principal\'s Office w/ Conference Area',
+            'P51': 'Principal\'s Secretary / Waiting',
+            'P52': 'Assistant Principal\'s Office - AP1',
+            'P53': 'Assistant Principal\'s Office - AP2',
+            'P54': 'Supervisory / Spare Office',
+            'P55': 'Conference Room',
+            'P56': 'Guidance Office',
+            'P57': 'Guidance Waiting Room',
+            'P58': 'Guidance Storeroom',
+            'P59': 'Career Center',
+            'P60': 'Records Room',
+            'P61': 'Teachers\' Work Room',
+            'P62': 'Custodian\'s Office',
+            'P63': 'Custodian\'s Workshop',
+            'P64': 'Custodian\'s Storage',
+            'P65': 'Recycling Room / Trash',
+            'P66': 'Receiving and General Supply',
+            'P67': 'Storeroom',
+            'P68': 'Network / Telecom Room'
+        };
+        
         window.schoolDetailsData.forEach(row => {
             const roomType = row["ROOM TYPE"];
             const guidelineKey = row["Guideline Key"];
             const result = roomResults[guidelineKey];
             
             if (result !== undefined) {
+                const actualDescription = pCodeDescriptions[guidelineKey] || roomType;
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><strong>${roomType}</strong></td>
+                    <td><strong>${actualDescription}</strong></td>
                     <td><code>${guidelineKey}</code></td>
                     <td><code>Guideline calculation based on enrollment and cycles</code></td>
                     <td>Using ${totalStudents} students</td>
@@ -616,6 +686,30 @@ function renderSchoolDetailsTable(containerId) {
   tableWrapper.className = "table-wrapper";
   container.appendChild(tableWrapper);
 
+  // Function to adjust sticky header positioning
+  const adjustStickyHeaders = () => {
+    const table = tableWrapper.querySelector('.data-table');
+    if (table) {
+      const firstHeaderRow = table.querySelector('thead tr:first-child');
+      const secondHeaderRow = table.querySelector('thead tr:nth-child(2)');
+      
+      if (firstHeaderRow && secondHeaderRow) {
+        // Get the computed height of the first row
+        const firstRowHeight = firstHeaderRow.offsetHeight;
+        // Set the second row to start right after the first row
+        secondHeaderRow.style.top = `${firstRowHeight}px`;
+        
+        // Ensure the first row stays at the very top
+        firstHeaderRow.style.top = '0px';
+        
+        console.log('Sticky headers adjusted:', {
+          firstRowHeight: firstRowHeight,
+          secondRowTop: secondHeaderRow.style.top
+        });
+      }
+    }
+  };
+
   const columnMap = {
     "Space Group": "Core_Academic_Spaces",
     "Space Type": "ROOM TYPE",
@@ -627,7 +721,8 @@ function renderSchoolDetailsTable(containerId) {
     "Proposed SF/Room": "Proposed_Keep_Room_NFA",
     "Proposed # Rooms": "Proposed_Keep_#_Rooms",
     "Difference SF/Room": "Difference_Proposed_ROOMNFA",
-    "Difference # Rooms": "Difference_Proposed_#_OF_RMS"
+    "Difference # Rooms": "Difference_Proposed_#_OF_RMS",
+    "Impact Total SF": "__Impact_calculated_total__"
   };
 
   const inputs = {
@@ -676,7 +771,7 @@ function renderSchoolDetailsTable(containerId) {
     <th colspan="2" class="text-center column-group proposed-group">
       <i class="fas fa-edit me-2"></i>Proposed
     </th>
-    <th colspan="2" class="text-center column-group difference-group">
+    <th colspan="3" class="text-center column-group difference-group">
       <i class="fas fa-balance-scale me-2"></i>Difference | Guideline vs Proposed
     </th>`;
   thead.appendChild(groupHeaderRow);
@@ -713,6 +808,10 @@ function renderSchoolDetailsTable(containerId) {
     const tr = document.createElement("tr");
 
     const Pkey = row["Guideline Key"];
+    
+    // Get current enrollment values for P26 calculation
+    const totalEnrollment = parseInt(document.getElementById("inputTotalEnrollment")?.value.replace(/,/g, "") || "0");
+    const specialEdEnrollment = parseInt(document.getElementById("inputSpecialEdEnrollment")?.value || "0");
     const column = window.guidelineFieldMap?.[Pkey] || "Guideline_#_Rooms";
     
     if (rowIndex === 0) {
@@ -730,7 +829,177 @@ function renderSchoolDetailsTable(containerId) {
 
     const guidelineRooms = parseFloat(row["Guideline_#_Rooms"]) || 0;
     const guidelineSF = parseFloat(row["Guideline_Room_NFA"]) || 0;
-    const totalGuidelineArea = guidelineRooms * guidelineSF;
+    
+    // Special handling for P26 - Locker Rooms (dynamic SF based on enrollment)
+    if (Pkey === "P26") {
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents * 5.6; // 5.6 SF per student
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P30 - Media Center (dynamic SF based on enrollment)
+    if (Pkey === "P30") {
+      // Formula: IF(enrollment < 600, 3650, 3650 + (enrollment - 600) * 6.25)
+      const dynamicSF = totalEnrollment < 600 ? 3650 : 3650 + (totalEnrollment - 600) * 6.25;
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P37 - Cafeteria (dynamic SF based on enrollment)
+    if (Pkey === "P37") {
+      // Formula: (Total Enrollment + Special Ed Enrollment) / Number of Lunch Periods * 15 SF per seat
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const lunchPeriods = 2; // From Instruction_Cycles.csv
+      const dynamicSF = (totalStudents / lunchPeriods) * 15; // 15 SF per seat
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P38 - Chair and Table Storage (dynamic SF based on enrollment)
+    if (Pkey === "P38") {
+      // Formula: IF((enrollment + Special Ed enrollment)<600,300,300+ROUND(((enrollment + special Ed enrollment)-600)/400*100,0))
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + Math.round((totalStudents - 600) / 400 * 100);
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P40 - Kitchen (dynamic SF based on enrollment)
+    if (Pkey === "P40") {
+      // Formula: IF((enrollment + special enrollment)<300,1600,1600+((enrollment + special enrollment)-300))
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 300 ? 1600 : 1600 + (totalStudents - 300);
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P41 - Staff Lunch Room (dynamic SF based on enrollment)
+    if (Pkey === "P41") {
+      // Formula: IF((enrollment + special ed enrollment)<600,400,400+((enrollment + special ed enrollment)-600)*0.25)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 400 : 400 + (totalStudents - 600) * 0.25;
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P46 - General Office/Waiting Room/Toilet (dynamic SF based on enrollment)
+    if (Pkey === "P46") {
+      // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.5)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.5;
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P59 - Career Center (dynamic SF based on enrollment)
+    if (Pkey === "P59") {
+      // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.25)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.25;
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P60 - Records Room (dynamic SF based on enrollment)
+    if (Pkey === "P60") {
+      // Formula: IF(Enrolment + Special Ed enrollment<600,100,100+(Enrolment + Special Ed enrollment-600)*0.125)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 100 : 100 + (totalStudents - 600) * 0.125;
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P61 - Teachers Work Room (dynamic SF based on enrollment)
+    if (Pkey === "P61") {
+      // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.5)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.5;
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P66 - Receiving and General Supply (dynamic SF based on enrollment)
+    if (Pkey === "P66") {
+      // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.25)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.25;
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P67 - Store Room (dynamic SF based on enrollment)
+    if (Pkey === "P67") {
+      // Formula: IF(Enrolment + Special Ed enrollment<600,400,400+(Enrolment + Special Ed enrollment-600)*0.5)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 400 : 400 + (totalStudents - 600) * 0.5;
+      row["Guideline_Room_NFA"] = dynamicSF; // Update the SF per room value
+    }
+    
+    // Special handling for P26 - Locker Rooms (dynamic SF based on enrollment)
+    let totalGuidelineArea;
+    if (Pkey === "P26") {
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents * 5.6; // 5.6 SF per student
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P30") {
+      // Special handling for P30 - Media Center (dynamic SF based on enrollment)
+      // Formula: IF(enrollment < 600, 3650, 3650 + (enrollment - 600) * 6.25)
+      const dynamicSF = totalEnrollment < 600 ? 3650 : 3650 + (totalEnrollment - 600) * 6.25;
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P37") {
+      // Special handling for P37 - Cafeteria (dynamic SF based on enrollment)
+      // Formula: (Total Enrollment + Special Ed Enrollment) / Number of Lunch Periods * 15 SF per seat
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const lunchPeriods = 2; // From Instruction_Cycles.csv
+      const dynamicSF = (totalStudents / lunchPeriods) * 15; // 15 SF per seat
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P38") {
+      // Special handling for P38 - Chair and Table Storage (dynamic SF based on enrollment)
+      // Formula: IF((enrollment + Special Ed enrollment)<600,300,300+ROUND(((enrollment + special Ed enrollment)-600)/400*100,0))
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + Math.round((totalStudents - 600) / 400 * 100);
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P40") {
+      // Special handling for P40 - Kitchen (dynamic SF based on enrollment)
+      // Formula: IF((enrollment + special enrollment)<300,1600,1600+((enrollment + special enrollment)-300))
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 300 ? 1600 : 1600 + (totalStudents - 300);
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P41") {
+      // Special handling for P41 - Staff Lunch Room (dynamic SF based on enrollment)
+      // Formula: IF((enrollment + special ed enrollment)<600,400,400+((enrollment + special ed enrollment)-600)*0.25)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 400 : 400 + (totalStudents - 600) * 0.25;
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P46") {
+      // Special handling for P46 - General Office/Waiting Room/Toilet (dynamic SF based on enrollment)
+      // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.5)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.5;
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P59") {
+      // Special handling for P59 - Career Center (dynamic SF based on enrollment)
+      // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.25)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.25;
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P60") {
+      // Special handling for P60 - Records Room (dynamic SF based on enrollment)
+      // Formula: IF(Enrolment + Special Ed enrollment<600,100,100+(Enrolment + Special Ed enrollment-600)*0.125)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 100 : 100 + (totalStudents - 600) * 0.125;
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P61") {
+      // Special handling for P61 - Teachers Work Room (dynamic SF based on enrollment)
+      // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.5)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.5;
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P66") {
+      // Special handling for P66 - Receiving and General Supply (dynamic SF based on enrollment)
+      // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.25)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.25;
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else if (Pkey === "P67") {
+      // Special handling for P67 - Store Room (dynamic SF based on enrollment)
+      // Formula: IF(Enrolment + Special Ed enrollment<600,400,400+(Enrolment + Special Ed enrollment-600)*0.5)
+      const totalStudents = totalEnrollment + specialEdEnrollment;
+      const dynamicSF = totalStudents < 600 ? 400 : 400 + (totalStudents - 600) * 0.5;
+      totalGuidelineArea = guidelineRooms * dynamicSF;
+    } else {
+      totalGuidelineArea = guidelineRooms * guidelineSF;
+    }
     row["__Guideline_calculated_total__"] = totalGuidelineArea;
 
     // Safely retrieve the proposed values using the improved function
@@ -761,6 +1030,10 @@ const differenceSF = proposedSF - guidelineSF;
 // Update the row with calculated differences
 row["Difference_Proposed_ROOMNFA"] = isNaN(differenceSF) ? "" : formatValue(differenceSF);
 row["Difference_Proposed_#_OF_RMS"] = isNaN(differenceRooms) ? "" : formatValue(differenceRooms);
+
+// Calculate impact total SF: -(difference SF/room × difference # rooms)
+const impactTotalSF = -(differenceSF * differenceRooms);
+row["__Impact_calculated_total__"] = isNaN(impactTotalSF) ? "" : formatValue(impactTotalSF);
 
 
   
@@ -804,7 +1077,7 @@ Object.entries(columnMap).forEach(([label, key], colIndex) => {
     }
 
     // Apply color logic to difference columns during rendering
-    if (key === "Difference_Proposed_ROOMNFA" || key === "Difference_Proposed_#_OF_RMS") {
+    if (key === "Difference_Proposed_ROOMNFA" || key === "Difference_Proposed_#_OF_RMS" || key === "__Impact_calculated_total__") {
         const diffValue = parseFloat(td.textContent.replace(/,/g, "")) || 0;
         updateCellColor(td, diffValue);
     }
@@ -830,6 +1103,11 @@ totalRow.style.borderTop = "2px solid #dee2e6";
   let totalExistingRooms = 0;
   let totalProposedRooms = 0;
   let totalDifferenceRooms = 0;
+  let totalImpactSF = 0;
+  
+  // Get current enrollment values for P26 calculation
+  const totalEnrollment = parseInt(document.getElementById("inputTotalEnrollment")?.value.replace(/,/g, "") || "0");
+  const specialEdEnrollment = parseInt(document.getElementById("inputSpecialEdEnrollment")?.value || "0");
   
 
 
@@ -843,7 +1121,16 @@ filteredData.forEach((row) => {
 
   const guidelineRooms = parseFloat(row["Guideline_#_Rooms"]) || 0;
   const guidelineSF = parseFloat(row["Guideline_Room_NFA"]) || 0;
-  const totalGuidelineArea = guidelineRooms * guidelineSF;
+  
+  // Special handling for P26 - Locker Rooms (dynamic SF based on enrollment)
+  let totalGuidelineArea;
+  if (Pkey === "P26") {
+    const totalStudents = totalEnrollment + specialEdEnrollment;
+    const dynamicSF = totalStudents * 5.6; // 5.6 SF per student
+    totalGuidelineArea = guidelineRooms * dynamicSF;
+  } else {
+    totalGuidelineArea = guidelineRooms * guidelineSF;
+  }
 
   // Get existing values
   const rowKey = row["ROOM TYPE"];
@@ -878,6 +1165,10 @@ filteredData.forEach((row) => {
   totalExistingRooms += existingRooms;
   totalProposedRooms += proposedRooms;
   totalDifferenceRooms += differenceRooms;
+  
+  // Calculate and add impact total
+  const impactSF = -(differenceSF * differenceRooms);
+  totalImpactSF += impactSF;
   
 
 });
@@ -927,6 +1218,10 @@ Object.entries(columnMap).forEach(([label, key], colIndex) => {
     // Difference # Rooms
     td.textContent = formatValue(totalDifferenceRooms);
     updateCellColor(td, totalDifferenceRooms);
+  } else if (colIndex === 11) {
+    // Impact Total SF
+    td.textContent = formatValue(totalImpactSF);
+    updateCellColor(td, totalImpactSF);
   }
   
   totalRow.appendChild(td);
@@ -934,7 +1229,21 @@ Object.entries(columnMap).forEach(([label, key], colIndex) => {
 
 tbody.appendChild(totalRow);
 table.appendChild(tbody);
-  tableWrapper.appendChild(table);
+tableWrapper.appendChild(table);
+
+// Adjust sticky headers after table is rendered
+setTimeout(() => {
+  adjustStickyHeaders();
+}, 100);
+
+// Add event listeners for window resize to adjust sticky headers
+const resizeObserver = new ResizeObserver(() => {
+  adjustStickyHeaders();
+});
+
+if (tableWrapper) {
+  resizeObserver.observe(tableWrapper);
+}
   
   // Add column group legend
   const legend = document.createElement("div");
@@ -1054,6 +1363,33 @@ function reloadSchoolDetails() {
   renderSchoolDetailsTable();
 }
 
+// Global function to adjust sticky headers
+window.adjustStickyHeaders = function() {
+  const tableWrapper = document.getElementById('schoolDetailsTableContainer')?.querySelector('.table-wrapper');
+  if (tableWrapper) {
+    const table = tableWrapper.querySelector('.data-table');
+    if (table) {
+      const firstHeaderRow = table.querySelector('thead tr:first-child');
+      const secondHeaderRow = table.querySelector('thead tr:nth-child(2)');
+      
+      if (firstHeaderRow && secondHeaderRow) {
+        // Get the computed height of the first row
+        const firstRowHeight = firstHeaderRow.offsetHeight;
+        // Set the second row to start right after the first row
+        secondHeaderRow.style.top = `${firstRowHeight}px`;
+        
+        // Ensure the first row stays at the very top
+        firstHeaderRow.style.top = '0px';
+        
+        console.log('Global sticky headers adjusted:', {
+          firstRowHeight: firstRowHeight,
+          secondRowTop: secondHeaderRow.style.top
+        });
+      }
+    }
+  }
+};
+
 // Function to re-attach event listeners to Space Standards tables
 function reattachSpaceStandardsListeners() {
   console.log("🔍 Re-attaching Space Standards event listeners");
@@ -1143,6 +1479,15 @@ function waitForSectionAndCycleData(callback, attempts = 10) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  // Add window resize listener for sticky headers
+  window.addEventListener('resize', () => {
+    if (typeof window.adjustStickyHeaders === 'function') {
+      setTimeout(() => {
+        window.adjustStickyHeaders();
+      }, 100);
+    }
+  });
+
   // Load student enrollment data first
   fetch('Student_Number_Input.csv')
     .then(response => response.text())
@@ -1203,6 +1548,12 @@ window.addEventListener('DOMContentLoaded', () => {
                 row[field] = row[field].toString().replace(/,/g, "");
               }
             });
+            
+            // Set all existing and proposed values to 0
+            row["Existing_Room_NFA"] = "0";
+            row["Existing_#_Rooms"] = "0";
+            row["Proposed_Keep_Room_NFA"] = "0";
+            row["Proposed_Keep_#_Rooms"] = "0";
           });
 
           window.schoolDetailsData = cleaned;
@@ -1220,6 +1571,28 @@ window.addEventListener('DOMContentLoaded', () => {
             if (!window.schoolDetailsTableRendered && window.schoolDetailsData) {
               renderSchoolDetailsTable();
               window.schoolDetailsTableRendered = true;
+            } else if (window.schoolDetailsTableRendered) {
+              // Re-adjust sticky headers when tab is shown
+              setTimeout(() => {
+                const tableWrapper = document.getElementById('schoolDetailsTableContainer')?.querySelector('.table-wrapper');
+                if (tableWrapper) {
+                  const table = tableWrapper.querySelector('.data-table');
+                  if (table) {
+                    const firstHeaderRow = table.querySelector('thead tr:first-child');
+                    const secondHeaderRow = table.querySelector('thead tr:nth-child(2)');
+                    
+                    if (firstHeaderRow && secondHeaderRow) {
+                      // Get the computed height of the first row
+                      const firstRowHeight = firstHeaderRow.offsetHeight;
+                      // Set the second row to start right after the first row
+                      secondHeaderRow.style.top = `${firstRowHeight}px`;
+                      
+                      // Ensure the first row stays at the very top
+                      firstHeaderRow.style.top = '0px';
+                    }
+                  }
+                }
+              }, 200);
             }
           });
 
@@ -1493,8 +1866,13 @@ function updateDifferences(rowIndex) {
     cells[9].textContent = isNaN(diffSF) ? "" : formatValue(diffSF);
     cells[10].textContent = isNaN(diffRooms) ? "" : formatValue(diffRooms);
 
+    // Calculate and update impact total SF: -(difference SF/room × difference # rooms)
+    const impactTotalSF = -(diffSF * diffRooms);
+    cells[11].textContent = isNaN(impactTotalSF) ? "" : formatValue(impactTotalSF);
+
     updateCellColor(cells[9], diffSF);
     updateCellColor(cells[10], diffRooms);
+    updateCellColor(cells[11], impactTotalSF);
 
 
 // Optionally, update cell styles for difference columns

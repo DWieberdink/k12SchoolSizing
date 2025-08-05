@@ -156,30 +156,42 @@
             <!-- School Details -->
             <div class="tab-pane fade" id="details" role="tabpanel">
               <div class="school-details-section">
-                <div class="row g-4 mb-4">
-                  <div class="col-lg-6 col-md-6">
-                    <div class="input-card">
-                      <label for="inputTotalEnrollment" class="form-label">
-                        <i class="fas fa-users me-2"></i>Total Enrollment
-                      </label>
-                      <input type="text" id="inputTotalEnrollment" class="form-control form-control-lg" value="">
+                <!-- Collapsible Enrollment Section -->
+                <div class="enrollment-section mb-4">
+                  <div class="enrollment-header" onclick="toggleEnrollmentSection()">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>Enrollment Settings
+                      </h5>
+                      <i class="fas fa-chevron-down enrollment-toggle" id="enrollmentToggle"></i>
                     </div>
                   </div>
-                  <div class="col-lg-6 col-md-6">
-                    <div class="input-card">
-                      <label for="inputSpecialEdEnrollment" class="form-label">
-                        <i class="fas fa-wheelchair me-2"></i>Special Education Enrollment
-                      </label>
-                      <input type="number" id="inputSpecialEdEnrollment" class="form-control form-control-lg" value="">
+                  <div class="enrollment-content" id="enrollmentContent">
+                    <div class="row g-4 mt-3">
+                      <div class="col-lg-6 col-md-6">
+                        <div class="input-card">
+                          <label for="inputTotalEnrollment" class="form-label">
+                            <i class="fas fa-users me-2"></i>Total Enrollment
+                          </label>
+                          <input type="text" id="inputTotalEnrollment" class="form-control form-control-lg" value="">
+                        </div>
+                      </div>
+                      <div class="col-lg-6 col-md-6">
+                        <div class="input-card">
+                          <label for="inputSpecialEdEnrollment" class="form-label">
+                            <i class="fas fa-wheelchair me-2"></i>Special Education Enrollment
+                          </label>
+                          <input type="number" id="inputSpecialEdEnrollment" class="form-control form-control-lg" value="">
+                        </div>
+                      </div>
                     </div>
                   </div>
-
                 </div>
 
                 <!-- Controls Section -->
                 <div class="controls-section">
                   <div class="row align-items-center">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <div class="filter-controls">
                         <label class="form-label me-3" for="spaceGroupFilter">
                           <i class="fas fa-filter me-2"></i>Filter by Space Group
@@ -191,9 +203,9 @@
                         </select>
                       </div>
                     </div>
-                    <div class="col-md-6 text-end">
+                    <div class="col-md-8 text-end">
                       <div class="action-buttons">
-                        <button class="btn btn-outline-secondary" onclick="reloadSchoolDetails()">
+                        <button class="btn btn-outline-secondary me-2" onclick="reloadSchoolDetails()">
                           <i class="fas fa-sync-alt me-2"></i>Reload
                         </button>
                         <button onclick="localStorage.removeItem('proposedEdits'); localStorage.removeItem('existingEdits'); location.reload();" 
@@ -619,18 +631,38 @@
                       <i class="fas fa-running me-2"></i>Physical Education Spaces
                     </h6>
                     <div class="formula-category">
-                      <h6>Gym & Athletic Spaces (P21-P25)</h6>
+                      <h6>Gym & Athletic Spaces (P23-P29)</h6>
                       <div class="formula-explanation">
-                        <p><strong>Formula:</strong> <code>Rooms = (Total Students × PE Percentage) ÷ PE Section Size</code></p>
+                        <p><strong>Formula:</strong> <code>Rooms = Fixed values or calculated based on enrollment</code></p>
                         <p><strong>SF/Room:</strong> Fixed values from Space Standard Input</p>
                         <div class="formula-examples">
                           <div class="example-item">
-                            <span class="example-label">P21 - Gymnasium:</span>
-                            <span class="example-formula">(Total Students × 100%) ÷ Physical Education Section Size</span>
+                            <span class="example-label">P23 - Gymnasium:</span>
+                            <span class="example-formula">Fixed: 1 room</span>
                           </div>
                           <div class="example-item">
-                            <span class="example-label">P22 - Weight Room:</span>
-                            <span class="example-formula">(Total Students × 30%) ÷ 20 students per room</span>
+                            <span class="example-label">P24 - PE Alternatives:</span>
+                            <span class="example-formula">Fixed: 1 room</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P25 - Gym Storeroom:</span>
+                            <span class="example-formula">Fixed: 1 room</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P26 - Locker Rooms - Boys / Girls w/ Toilets:</span>
+                            <span class="example-formula">Fixed: 1 room (SF = Total Students × 5.6)</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P27 - Phys. Ed. Storage:</span>
+                            <span class="example-formula">Fixed: 1 room</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P28 - Athletic Director's Office:</span>
+                            <span class="example-formula">Fixed: 1 room</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P29 - Health Instructor's Office w/ Shower & Toilet:</span>
+                            <span class="example-formula">Fixed: 1 room</span>
                           </div>
                         </div>
                       </div>
@@ -643,18 +675,26 @@
                       <i class="fas fa-medkit me-2"></i>Service & Health Spaces
                     </h6>
                     <div class="formula-category">
-                      <h6>Health & Support Services (P26-P30)</h6>
+                      <h6>Health & Support Services (P42-P45)</h6>
                       <div class="formula-explanation">
                         <p><strong>Formula:</strong> <code>Rooms = Total Students ÷ Students per Service Provider</code></p>
                         <p><strong>SF/Room:</strong> Fixed values from Space Standard Input</p>
                         <div class="formula-examples">
                           <div class="example-item">
-                            <span class="example-label">P26 - Health Office:</span>
-                            <span class="example-formula">Total Students ÷ 500 students per nurse</span>
+                            <span class="example-label">P42 - Medical Suite Toilet:</span>
+                            <span class="example-formula">Fixed: 1 room</span>
                           </div>
                           <div class="example-item">
-                            <span class="example-label">P27 - Counseling Office:</span>
-                            <span class="example-formula">Total Students ÷ 250 students per counselor</span>
+                            <span class="example-label">P43 - Nurses' Office / Waiting Room:</span>
+                            <span class="example-formula">Fixed: 1 room</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P44 - Interview Room:</span>
+                            <span class="example-formula">1 + Math.round((Total Students - 600) / 400)</span>
+                          </div>
+                          <div class="example-item">
+                            <span class="example-label">P45 - Examination Room / Resting:</span>
+                            <span class="example-formula">Math.ceil(Total Students / 250)</span>
                           </div>
                         </div>
                       </div>
@@ -1333,7 +1373,82 @@
           guidelineRooms = roomResults[Pkey];
         }
         
-        const totalGuidelineArea = guidelineRooms * guidelineSF;
+        // Special handling for P26 - Locker Rooms (dynamic SF based on enrollment)
+        let totalGuidelineArea;
+        if (Pkey === "P26") {
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents * 5.6; // 5.6 SF per student
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P30") {
+          // Special handling for P30 - Media Center (dynamic SF based on enrollment)
+          // Formula: IF(enrollment < 600, 3650, 3650 + (enrollment - 600) * 6.25)
+          const dynamicSF = totalEnrollment < 600 ? 3650 : 3650 + (totalEnrollment - 600) * 6.25;
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P37") {
+          // Special handling for P37 - Cafeteria (dynamic SF based on enrollment)
+          // Formula: (Total Enrollment + Special Ed Enrollment) / Number of Lunch Periods * 15 SF per seat
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const lunchPeriods = 2; // From Instruction_Cycles.csv
+          const dynamicSF = (totalStudents / lunchPeriods) * 15; // 15 SF per seat
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P38") {
+          // Special handling for P38 - Chair and Table Storage (dynamic SF based on enrollment)
+          // Formula: IF((enrollment + Special Ed enrollment)<600,300,300+ROUND(((enrollment + special Ed enrollment)-600)/400*100,0))
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents < 600 ? 300 : 300 + Math.round((totalStudents - 600) / 400 * 100);
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P40") {
+          // Special handling for P40 - Kitchen (dynamic SF based on enrollment)
+          // Formula: IF((enrollment + special enrollment)<300,1600,1600+((enrollment + special enrollment)-300))
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents < 300 ? 1600 : 1600 + (totalStudents - 300);
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P41") {
+          // Special handling for P41 - Staff Lunch Room (dynamic SF based on enrollment)
+          // Formula: IF((enrollment + special ed enrollment)<600,400,400+((enrollment + special ed enrollment)-600)*0.25)
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents < 600 ? 400 : 400 + (totalStudents - 600) * 0.25;
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P46") {
+          // Special handling for P46 - General Office/Waiting Room/Toilet (dynamic SF based on enrollment)
+          // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.5)
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.5;
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P59") {
+          // Special handling for P59 - Career Center (dynamic SF based on enrollment)
+          // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.25)
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.25;
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P60") {
+          // Special handling for P60 - Records Room (dynamic SF based on enrollment)
+          // Formula: IF(Enrolment + Special Ed enrollment<600,100,100+(Enrolment + Special Ed enrollment-600)*0.125)
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents < 600 ? 100 : 100 + (totalStudents - 600) * 0.125;
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P61") {
+          // Special handling for P61 - Teachers Work Room (dynamic SF based on enrollment)
+          // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.5)
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.5;
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P66") {
+          // Special handling for P66 - Receiving and General Supply (dynamic SF based on enrollment)
+          // Formula: IF(Enrolment + Special Ed enrollment<600,300,300+(Enrolment + Special Ed enrollment-600)*0.25)
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents < 600 ? 300 : 300 + (totalStudents - 600) * 0.25;
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else if (Pkey === "P67") {
+          // Special handling for P67 - Store Room (dynamic SF based on enrollment)
+          // Formula: IF(Enrolment + Special Ed enrollment<600,400,400+(Enrolment + Special Ed enrollment-600)*0.5)
+          const totalStudents = totalEnrollment + specialEdEnrollment;
+          const dynamicSF = totalStudents < 600 ? 400 : 400 + (totalStudents - 600) * 0.5;
+          totalGuidelineArea = guidelineRooms * dynamicSF;
+        } else {
+          totalGuidelineArea = guidelineRooms * guidelineSF;
+        }
+        
         totalNSF += totalGuidelineArea;
       });
       
@@ -1374,10 +1489,10 @@
       const headerGSF = document.getElementById("headerTotalGSF");
       
       if (headerNSF) {
-        headerNSF.textContent = totalNSF.toLocaleString();
+        headerNSF.textContent = Math.round(totalNSF).toLocaleString();
       }
       if (headerGSF) {
-        headerGSF.textContent = totalGSF.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 1});
+        headerGSF.textContent = Math.round(totalGSF).toLocaleString();
       }
     }
 
@@ -1876,6 +1991,21 @@
 
   <!-- Password Check Function -->
   <script>
+    function toggleEnrollmentSection() {
+      const content = document.getElementById('enrollmentContent');
+      const toggle = document.getElementById('enrollmentToggle');
+      
+      if (content.classList.contains('collapsed')) {
+        // Expand
+        content.classList.remove('collapsed');
+        toggle.classList.add('rotated');
+      } else {
+        // Collapse
+        content.classList.add('collapsed');
+        toggle.classList.remove('rotated');
+      }
+    }
+
     function checkPassword() {
       const password = document.getElementById('passwordInput').value;
       const errorDiv = document.getElementById('passwordError');

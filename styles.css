@@ -546,6 +546,56 @@ body {
   padding: 1.5rem;
 }
 
+/* Collapsible Enrollment Section */
+.enrollment-section {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.enrollment-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.enrollment-header:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.enrollment-header h5 {
+  color: white;
+  margin: 0;
+  font-weight: 600;
+}
+
+.enrollment-toggle {
+  transition: transform 0.3s ease;
+  font-size: 1.1rem;
+}
+
+.enrollment-toggle.rotated {
+  transform: rotate(180deg);
+}
+
+.enrollment-content {
+  padding: 1.5rem;
+  background: white;
+  transition: all 0.3s ease;
+  max-height: 200px;
+  overflow: hidden;
+}
+
+.enrollment-content.collapsed {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .input-card {
   background: white;
   border-radius: var(--border-radius);
@@ -641,6 +691,8 @@ body {
   height: 500px; /* Fixed height to force scrolling */
   overflow: auto; /* Enable scrolling */
   position: relative;
+  /* Add padding to ensure headers are not cut off */
+  padding-top: 0;
 }
 
 /* Table wrapper to contain the sticky headers */
@@ -656,6 +708,10 @@ body {
   padding: 1px;
   /* Force horizontal scrollbar to appear */
   min-width: 0;
+  /* Ensure proper stacking context for sticky headers */
+  isolation: isolate;
+  /* Ensure proper positioning context for sticky elements */
+  position: relative;
 }
 
 /* Sticky header implementation */
@@ -673,7 +729,6 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
-  /* Remove white background to allow original colors */
   /* Ensure proper stacking */
   isolation: isolate;
 }
@@ -682,16 +737,19 @@ body {
   position: -webkit-sticky;
   position: sticky;
   top: 0;
-  z-index: 11;
-  /* Remove background override to keep original colors */
+  z-index: 12;
+  /* Ensure proper background for sticky behavior */
+  background: white !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .data-table thead tr:nth-child(2) {
   position: -webkit-sticky;
   position: sticky;
-  top: 60px; /* Height of first header row */
-  z-index: 10;
-  background: white;
+  top: 0; /* Will be dynamically adjusted by JavaScript */
+  z-index: 11;
+  background: white !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Ensure headers have proper styling */
@@ -702,6 +760,10 @@ body {
   white-space: normal;
   word-wrap: break-word;
   line-height: 1.2;
+  /* Ensure proper sticky behavior */
+  position: relative;
+  /* Ensure text is always visible */
+  color: #333 !important;
 }
 
 /* Give more width to the first two columns */
@@ -749,14 +811,21 @@ body {
 
 /* Preserve column group colors when sticky */
 .data-table thead tr:first-child .column-group {
+  /* Keep the original background colors but ensure text is visible */
+  color: black !important;
+  font-weight: bold !important;
+}
+
+/* Ensure individual header cells in first row have proper background */
+.data-table thead tr:first-child th {
   background: inherit !important;
-  color: white !important;
 }
 
 /* Ensure subheader text is visible */
 .data-table thead tr:nth-child(2) th {
   color: #333 !important;
   background: white !important;
+  font-weight: 600 !important;
 }
 
 /* Add shadow to sticky headers */
@@ -767,6 +836,9 @@ body {
   left: 0;
   right: 0;
   height: 3px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+  pointer-events: none;
+}
   background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
   pointer-events: none;
 }
